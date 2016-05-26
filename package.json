@@ -1,0 +1,23 @@
+{
+  "name": "nodejs-utils",
+  "version": "0.0.1",
+  "description": "Miscellaneous utility functions for Node.JS",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SamuelMarks/nodejs-utils.git"
+  },
+  "author": "Samuel Marks <samuelmarks@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SamuelMarks/nodejs-utils/issues"
+  },
+  "homepage": "https://github.com/SamuelMarks/nodejs-utils#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3"
+  }
+}
