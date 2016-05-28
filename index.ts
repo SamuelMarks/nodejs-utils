@@ -1,6 +1,6 @@
 import {readdirSync, statSync} from 'fs';
 import {normalize, sep, join} from 'path';
-import {IModelRoute} from 'nodejs_utils';
+import {IModelRoute} from 'nodejs-utils';
 
 export function trivial_merge(obj, ...objects: Array<{}>) {
     for (const key in objects)

@@ -5,6 +5,6 @@
     "node": "registry:dt/node#6.0.0+20160524002506"
   },
   "dependencies": {
-    "nodejs_utils": "github:SamuelMarks/nodejs-utils/nodejs_utils.d.ts"
+    "nodejs-utils": "github:SamuelMarks/nodejs-utils/nodejs-utils.d.ts"
   }
 }
