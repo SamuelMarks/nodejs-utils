@@ -1,3 +1,5 @@
+import {Stats} from 'fs';
+
 declare var nodejs_utils: nodejs_utils.nodejs_utils;
 
 declare module nodejs_utils {
@@ -11,7 +13,23 @@ declare module nodejs_utils {
         populateModelRoutes(dir: string): IModelRoute;
         getUTCDate(now: Date): Date;
         sanitiseSchema(schema: {}, omit: Array<string>): {};
+        mkdirP(dir: string, opts: ImkdirpOpts, f: Function, made?)
     }
+
+    export interface ImkdirpOpts {
+        fs?: {
+            mkdir: (path: string | Buffer, mode: number,
+                    callback?: (err?: NodeJS.ErrnoException) => void) => void;
+            stat: (path: string | Buffer,
+                   callback?: (err: NodeJS.ErrnoException, stats: Stats) => any) => void;
+        }
+        mode?: number;
+    }
+
+    export interface ImkdirpCb {
+        (err: NodeJS.ErrnoException, made: string): void;
+    }
+
 
     export interface IModelRoute {
         [key: string]: {

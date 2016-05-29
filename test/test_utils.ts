@@ -1,5 +1,10 @@
+import * as async from 'async';
+import {mkdtemp, writeFile} from 'fs';
 import {expect} from 'chai';
-import {binarySearch, isShallowSubset, uri_to_config} from '../index';
+import {binarySearch, isShallowSubset, uri_to_config, trivialWalk, mkdirP} from '../index';
+import {tmpdir} from 'os';
+import {join as path_join} from 'path';
+import * as rimraf from 'rimraf';
 
 
 describe('utils::helpers', () => {
@@ -146,5 +151,41 @@ describe('utils::helpers', () => {
          });
          });
          */
-    })
+    });
+
+    describe('trivialWalk', () => {
+            before('set dir structure', callback =>
+                mkdtemp(path_join(tmpdir(), 'nodejs-utils-test_'), (err, dir) => {
+                        if (err) return callback(err);
+                        this.dir = dir;
+                        this.tree = [
+                            [this.dir, 'foo.txt'],
+                            [path_join(this.dir, 'bar'), 'haz.txt'],
+                            [path_join(this.dir, 'can'), 'baz.ts'],
+                            [path_join(this.dir, 'can'), 'baz.js']
+                        ];
+
+                        async.map(this.tree, (dir_file: string[], cb) =>
+                            async.series([
+                                    call_back => mkdirP(dir_file[0], call_back),
+                                    call_back =>
+                                        writeFile(path_join(...dir_file), '', 'utf8', call_back)
+                                ], cb
+                            ), callback);
+                    }
+                )
+            );
+
+            after('cleanup created tree', callback =>
+                rimraf(this.dir, callback)
+            );
+
+            it('Returns simple list', () => {
+                    expect(trivialWalk(this.dir)).to.have.members(
+                        this.tree.map((dir_file: string[]) => path_join(...dir_file))
+                    );
+                }
+            )
+        }
+    );
 });

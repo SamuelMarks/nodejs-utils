@@ -1,7 +1,7 @@
 nodejs-utils
 ============
 
-Custom errors for the Node.JS restify framework.
+Custom errors for the Node.JS restify framework. Tests need Node.JS >= v5.10.0 to work.
 
 If using TypeScript, install `typings` with:
 

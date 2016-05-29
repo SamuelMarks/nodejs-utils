@@ -1,6 +1,7 @@
+import * as fs from 'fs';
 import {readdirSync, statSync} from 'fs';
-import {normalize, sep, join} from 'path';
-import {IModelRoute} from 'nodejs-utils';
+import {normalize, sep, join, dirname, resolve} from 'path';
+import {IModelRoute, ImkdirpOpts, ImkdirpCb} from 'nodejs-utils';
 
 export function trivial_merge(obj, ...objects: Array<{}>) {
     for (const key in objects)
@@ -103,7 +104,7 @@ export function binarySearch(a: any[], e: any, c = (a, b) => a > b) {
 }
 
 export function trivialWalk(dir, excludeDirs?) {
-    return readdirSync(dir).reduce(function (list, file) {
+    return readdirSync(dir).reduce((list, file) => {
         const name = join(dir, file);
         if (statSync(name).isDirectory()) {
             if (excludeDirs && excludeDirs.length) {
@@ -164,4 +165,46 @@ export function sanitiseSchema(schema: {}, omit: Array<string>): {} {
     return objListToObj(Object.keys(schema).map(k => {
         return {[k]: k === 'required' ? schema[k].filter(x => omit.indexOf(x) === -1) : schema[k]}
     }));
+}
+
+const _0777 = parseInt('0777', 8);
+
+
+export function mkdirP(dir: string, opts: ImkdirpOpts, cb?: ImkdirpCb, made?) {
+    // Refactored from https://github.com/substack/node-mkdirp
+    dir = resolve(dir);
+    if (typeof opts === 'function') {
+        cb = <ImkdirpCb>opts;
+        opts = {};
+    }
+    else if (!opts || typeof opts !== 'object')
+        opts = {mode: <number>opts};
+
+    opts.mode = opts.mode || (_0777 & (~process.umask()));
+    opts.fs = opts.fs || fs;
+
+    if (!made) made = null;
+
+    cb = cb || (() => undefined);
+
+    opts.fs.mkdir(dir, opts.mode, function (error) {
+        if (!error) {
+            made = made || dir;
+            return cb(null, made);
+        }
+        switch (error.code) {
+            case 'ENOENT':
+                mkdirP(dirname(dir), opts, function (err, made) {
+                    if (err) cb(err, made);
+                    else mkdirP(dir, opts, cb, made);
+                });
+                break;
+
+            default:
+                opts.fs.stat(dir, function (e, stat) {
+                    if (e || !stat.isDirectory()) cb(error || e, made);
+                    else cb(null, made);
+                });
+        }
+    });
 }

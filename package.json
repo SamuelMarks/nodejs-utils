@@ -1,10 +1,10 @@
 {
   "name": "nodejs-utils",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Miscellaneous utility functions for Node.JS",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test --recursive"
+    "test": "mocha test --recursive --require ts-node/register"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,11 @@
   },
   "homepage": "https://github.com/SamuelMarks/nodejs-utils#readme",
   "devDependencies": {
+    "async": "^2.0.0-rc.5",
     "chai": "^3.5.0",
-    "mocha": "^2.5.3"
+    "mocha": "^2.5.3",
+    "rimraf": "^2.5.2",
+    "ts-node": "^0.7.3",
+    "typescript": "^1.8.10"
   }
 }
