@@ -120,21 +120,14 @@ export function trivialWalk(dir, excludeDirs?) {
     }, []);
 }
 
+const excludeDirs = ['node_modules', 'typings', 'bower_components', '.git', '.idea', 'test'];
 export function populateModelRoutes(dir: string): IModelRoute {
-    return <IModelRoute>objListToObj(
-        Array.prototype.concat.apply([],
-            trivialWalk(dir, ['node_modules', 'typings', 'bower_components', '.git', '.idea', 'test']).map(p => {
-                const fst = (_idx => _idx === -1 ? p.length : _idx)(p.indexOf(sep));
-                const snd = (_idx => _idx === -1 ? p.length : _idx)(p.indexOf(sep, fst + 1));
-                const allowedFnames = ['models.js', 'routes.js', 'admin.js'];
-                const fname = (f => allowedFnames.indexOf(f) !== -1 ? f : null)(p.slice(snd + 1, p.length));
-                return fname ? {
-                    [p.slice(fst + 1, snd)]: {
-                        [p.slice(p.lastIndexOf(sep) + 1, p.indexOf('.'))]: require(['.', '..', p].join(sep).split(sep).join('/'))
-                    }
-                } : undefined;
-            })).filter(_=>_)
-    );
+    const allowedFnames = ['models.js', 'routes.js', 'admin.js'];
+    return <IModelRoute>objListToObj(trivialWalk(dir).filter(p => allowedFnames.indexOf(p.slice(p.lastIndexOf(sep) + 1)) !== -1).map(p => {
+            const lst = p.lastIndexOf(sep);
+            return {[p.slice(p.lastIndexOf(sep, lst - 1) + 1, lst)]: {[(lst !== -1 ? p.slice(lst + 1, p.lastIndexOf('.')) : sep)]: require(p[0] === sep || p[1] === ':' ? p : resolve(`.${sep}${p}`))}}
+        }
+    ));
 }
 
 export function objListToObj(objList: Array<{}>): {} {

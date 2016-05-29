@@ -1,9 +1,9 @@
 import * as async from 'async';
-import {mkdtemp, writeFile} from 'fs';
+import {mkdtemp, open as fs_open, rmdir, writeFile} from 'fs';
 import {expect} from 'chai';
-import {binarySearch, isShallowSubset, uri_to_config, trivialWalk, mkdirP} from '../index';
+import {binarySearch, isShallowSubset, uri_to_config, trivialWalk, mkdirP, populateModelRoutes} from '../index';
 import {tmpdir} from 'os';
-import {join as path_join} from 'path';
+import {join as path_join, basename} from 'path';
 import * as rimraf from 'rimraf';
 
 
@@ -153,39 +153,86 @@ describe('utils::helpers', () => {
          */
     });
 
-    describe('trivialWalk', () => {
-            before('set dir structure', callback =>
-                mkdtemp(path_join(tmpdir(), 'nodejs-utils-test_'), (err, dir) => {
-                        if (err) return callback(err);
-                        this.dir = dir;
-                        this.tree = [
-                            [this.dir, 'foo.txt'],
-                            [path_join(this.dir, 'bar'), 'haz.txt'],
-                            [path_join(this.dir, 'can'), 'baz.ts'],
-                            [path_join(this.dir, 'can'), 'baz.js']
-                        ];
+    describe('trivialWalk and populateModelRoutes', () => {
+        before('create full tree', callback =>
+            mkdtemp(path_join(tmpdir(), 'nodejs-utils-test_'), (err, dir) => {
+                    if (err) return callback(err);
+                    this.dir = dir;
+                    this.tree = [
+                        [this.dir, 'routes.js'],
+                        [path_join(this.dir, 'api', 'jarring'), 'routes.js'],
+                        [path_join(this.dir, 'api3', 'car'), 'models.js'],
+                        [path_join(this.dir, 'can'), 'routes.js'],
+                        [path_join(this.dir, 'jar', 'far', 'raw'), 'models.js'],
+                        [path_join(this.dir, 'node_modules', 'far', 'raw'), 'admin.js'],
+                    ];
 
-                        async.map(this.tree, (dir_file: string[], cb) =>
-                            async.series([
-                                    call_back => mkdirP(dir_file[0], call_back),
-                                    call_back =>
-                                        writeFile(path_join(...dir_file), '', 'utf8', call_back)
-                                ], cb
-                            ), callback);
-                    }
+                    async.map(this.tree, (dir_file: string[], cb) =>
+                        async.series([
+                                call_back => mkdirP(dir_file[0], call_back),
+                                call_back =>
+                                    fs_open(path_join(...dir_file), 'w', call_back),
+                                call_back =>
+                                    writeFile(path_join(...dir_file), 'exports.bar = function(){}', 'utf8', call_back)
+                            ], cb
+                        ), callback);
+                }
+            )
+        );
+
+        after('delete full tree', callback =>
+            rimraf(this.dir, callback)
+        );
+
+        before('create empty tree', callback =>
+            mkdtemp(path_join(tmpdir(), 'nodejs-utils-test_'), (err, dir) => {
+                    if (err) return callback(err);
+                    this.empty_dir = dir;
+                    return callback();
+                }
+            )
+        );
+
+        after('delete empty tree', callback =>
+            rmdir(this.empty_dir, callback)
+        );
+
+        describe('trivialWalk', () => {
+            it('should work on empty tree', () => {
+                const res = trivialWalk(this.empty_dir);
+                expect(res).to.be.an.instanceOf(Array);
+                expect(res).to.be.empty || (() => undefined)();
+            });
+
+            it('should work 3 levels deep', () =>
+                expect(trivialWalk(this.dir)).to.have.members(
+                    this.tree.map((dir_file: string[]) => path_join(...dir_file))
                 )
             );
 
-            after('cleanup created tree', callback =>
-                rimraf(this.dir, callback)
-            );
-
-            it('Returns simple list', () => {
-                    expect(trivialWalk(this.dir)).to.have.members(
-                        this.tree.map((dir_file: string[]) => path_join(...dir_file))
-                    );
-                }
+            it('should filter 3 levels deep', () =>
+                expect(trivialWalk(this.dir, ['node_modules'])).to.have.members(
+                    this.tree.map((dir_file: string[]) => path_join(...dir_file))
+                )
             )
-        }
-    );
+        });
+
+        describe('populateModelRoutes', () => {
+            it('should work on empty tree', () => {
+                const res = populateModelRoutes(this.empty_dir);
+                expect(res).to.be.an.instanceOf(Object);
+                expect(res).to.be.empty || (() => undefined)();
+            });
+
+            it('should work 3 levels deep', () => {
+                const res = populateModelRoutes(this.dir);
+                expect(res).to.be.an.instanceOf(Object);
+                const keys = [
+                    'jarring', 'car', 'can', 'raw', basename(this.dir)
+                ];
+                expect(res).to.have.all.keys(keys);
+                keys.map(key => expect(res[key]).to.have.any.keys(['models', 'admin', 'routes']));
+            })
+        });
+    });
 });
