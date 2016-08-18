@@ -30,9 +30,9 @@ declare module nodejs_utils {
         (err: NodeJS.ErrnoException, made: string): void;
     }
 
-
     export interface IModelRoute {
         [key: string]: {
+            route?: {create?: Function, read?: Function, update?: Function, del?: Function};
             routes?: {create?: Function, read?: Function, update?: Function, del?: Function};
             models?: any; // ^ Could have more than CRUD, but this is better than `any` or `{}`
         }

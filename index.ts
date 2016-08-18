@@ -121,11 +121,14 @@ export function trivialWalk(dir, excludeDirs?) {
 }
 
 const excludeDirs = ['node_modules', 'typings', 'bower_components', '.git', '.idea', 'test'];
-export function populateModelRoutes(dir: string): IModelRoute {
-    const allowedFnames = ['models.js', 'routes.js', 'admin.js'];
-    return <IModelRoute>objListToObj(trivialWalk(dir).filter(p => allowedFnames.indexOf(p.slice(p.lastIndexOf(sep) + 1)) !== -1).map(p => {
+export function populateModelRoutes(dir: string,
+                                    allowedFnames = ['models.js', 'route.js', 'routes.js', 'admin.js']): IModelRoute {
+    return <IModelRoute>objListToObj(trivialWalk(dir).filter(
+        p => allowedFnames.indexOf(p.slice(p.lastIndexOf(sep) + 1)) !== -1).map(p => {
             const lst = p.lastIndexOf(sep);
-            return {[p.slice(p.lastIndexOf(sep, lst - 1) + 1, lst)]: {[(lst !== -1 ? p.slice(lst + 1, p.lastIndexOf('.')) : sep)]: require(p[0] === sep || p[1] === ':' ? p : resolve(`.${sep}${p}`))}}
+            return {[p.slice(p.lastIndexOf(sep, lst - 1) + 1, lst)]: {
+                [(lst !== -1 ? p.slice(lst + 1, p.lastIndexOf('.')) : sep)]:
+                    require(p[0] === sep || p[1] === ':' ? p : resolve(`.${sep}${p}`))}}
         }
     ));
 }

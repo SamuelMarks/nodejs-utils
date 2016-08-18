@@ -11,6 +11,6 @@ Otherwise just use the [nodejs-utils-dist](https://github.com/SamuelMarks/nodejs
 
 ## Miscellaneous
 
-Clone the dist repo in the same directory this repo was cloned into, then you can synchronise them with:
+Clone [nodejs-utils-dist](https://github.com/SamuelMarks/nodejs-utils-dist) one dir above where this repo was cloned, then synchronise with:
 
     find -type f -not -name "*.ts" -and -not -path "./.git/*" -and -not -path "./node-modules/*" -and -not -name '*.map' | cpio -pdamv ../nodejs-utils-dist
