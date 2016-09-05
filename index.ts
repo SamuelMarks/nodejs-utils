@@ -17,6 +17,7 @@ export function trivial_merge(obj, ...objects: Array<{}>) {
 interface config {
     user: string;
     password?: string;
+    pass?: string;
     host?: string;
     database?: string;
     identity: string;
@@ -31,11 +32,12 @@ export function uri_to_config(uri: string) {
                     {
                         user: user,
                         identity: user
-                    }, function passwd_host(): { host: string, pass?: string } {
+                    }, function passwd_host(): { host: string, pass?: string, password?: string } {
                         const at_at: number = arr[1].search('@');
                         if (at_at === -1) return {host: arr[1]};
                         return {
                             pass: arr[1].substr(0, at_at),
+                            password: arr[1].substr(0, at_at),
                             host: arr[1].substr(at_at + 1)
                         }
                     }(),
@@ -54,7 +56,7 @@ export function uri_to_config(uri: string) {
                     {
                         user: u,
                         identity: u
-                    }, function passwd_host_db(): { host: string, password?: string } {
+                    }, function passwd_host_db(): { host: string, password?: string, pass?: string } {
                         function host_db(s: string): { host: string, database?: string } {
                             const slash_at = s.search('/');
                             if (slash_at === -1) return {host: s};
@@ -67,7 +69,7 @@ export function uri_to_config(uri: string) {
                         const at_at: number = arr[1].search('@');
                         if (at_at === -1) return host_db(arr[1]);
                         return trivial_merge(
-                            {password: arr[1].substr(0, at_at)},
+                            {password: arr[1].substr(0, at_at), pass: arr[1].substr(0, at_at)},
                             host_db(arr[1].substr(at_at + 1))
                         );
                     }()

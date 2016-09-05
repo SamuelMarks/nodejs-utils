@@ -129,8 +129,9 @@ describe('utils::helpers', () => {
                 "database": "postgres",
                 "host": "localhost",
                 "identity": "postgres",
+                "pass": "postgres",
                 "password": "postgres",
-                "user": "postgres",
+                "user": "postgres"
             })
         );
 
@@ -138,6 +139,18 @@ describe('utils::helpers', () => {
             expect(uri_to_config('postgresql://localhost')).to.deep.equal({
                 "host": "localhost",
                 "identity": "postgres",
+                "user": "postgres"
+            })
+        );
+
+        it('should work with dokku', () =>
+            expect(uri_to_config('postgres://postgres:f1d610fa5e04f3a1@dokku-postgres-se:5432/node_db')).to.deep.equal({
+                "database": "node_db",
+                "host": "dokku-postgres-se",
+                "identity": "postgres",
+                "pass": "f1d610fa5e04f3a1",
+                "password": "f1d610fa5e04f3a1",
+                "port": "5432",
                 "user": "postgres"
             })
         );
