@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { readdirSync, statSync } from 'fs';
+import * as URI from 'uri-js';
 import { dirname, join, normalize, resolve, sep } from 'path';
 import { ImkdirpCb, ImkdirpOpts, IModelRoute } from 'nodejs-utils';
 
@@ -142,4 +143,31 @@ export const mkdirP = (dir: string, opts: ImkdirpOpts, cb?: ImkdirpCb, made?) =>
                 });
         }
     });
+};
+
+export interface IConnectionConfig {
+    host: string;
+    user?: string;
+    password?: string;
+    database: string;
+    port: number | string;
+}
+
+export const uri_to_config = (uri: string): IConnectionConfig => {
+    const comps: URI.URIComponents = URI.parse(uri);
+    const user_pass = comps.userinfo.split(':');
+    const user_obj: {user?: string, password?: string} = {};
+
+    if (user_pass.length === 2) {
+        user_obj.user = user_pass[0];
+        user_obj.password = user_pass[1];
+    }
+    else if (user_pass.length === 1 && typeof user_pass[0] === 'string' && user_pass[0].length > 0)
+        user_obj.user = user_pass[0];
+
+    return Object.assign({
+        host: comps.host,
+        database: comps.path.length > 2 ? comps.path.slice(1) : undefined,
+        port: comps.port
+    }, user_obj);
 };

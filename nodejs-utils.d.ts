@@ -47,3 +47,11 @@ export declare const groupBy: (array: any[], f: Function) => any[];
 export declare const getUTCDate: (now?: Date) => Date;
 export declare const sanitiseSchema: (schema: {}, omit: string[]) => {};
 export declare const mkdirP: (dir: string, opts: ImkdirpOpts, cb?: ImkdirpCb, made?: any) => void;
+export interface IConnectionConfig {
+    host: string;
+    user?: string;
+    password?: string;
+    database: string;
+    port: number | string;
+}
+export declare const uri_to_config: (uri: string) => IConnectionConfig;

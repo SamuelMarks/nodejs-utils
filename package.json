@@ -1,6 +1,6 @@
 {
   "name": "nodejs-utils",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Miscellaneous utility functions for Node.JS",
   "main": "index.js",
   "scripts": {
@@ -29,5 +29,8 @@
     "rimraf": "^2.6.1",
     "ts-node": "^3.2.0",
     "typescript": "^2.4.1"
+  },
+  "dependencies": {
+    "uri-js": "^3.0.2"
   }
 }
