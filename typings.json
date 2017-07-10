@@ -1,11 +1,4 @@
 {
-  "globalDependencies": {
-    "async": "registry:dt/async#2.0.1+20160804113311",
-    "chai": "registry:dt/chai#3.4.0+20160601211834",
-    "mocha": "registry:dt/mocha#2.2.5+20160720003353",
-    "node": "registry:env/node#6.0.0+20160813135048",
-    "rimraf": "registry:dt/rimraf#0.0.0+20160317120654"
-  },
   "dependencies": {
     "nodejs-utils": "github:SamuelMarks/nodejs-utils/nodejs-utils.d.ts"
   }

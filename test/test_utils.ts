@@ -1,9 +1,9 @@
 import * as async from 'async';
-import {mkdtemp, open as fs_open, rmdir, writeFile} from 'fs';
-import {expect} from 'chai';
-import {binarySearch, isShallowSubset, uri_to_config, trivialWalk, mkdirP, populateModelRoutes} from '../index';
-import {tmpdir} from 'os';
-import {join as path_join, basename} from 'path';
+import { mkdtemp, open as fs_open, rmdir, writeFile } from 'fs';
+import { expect } from 'chai';
+import { binarySearch, isShallowSubset, mkdirP, populateModelRoutes, trivialWalk } from '../index';
+import { tmpdir } from 'os';
+import { basename, join as path_join } from 'path';
 import * as rimraf from 'rimraf';
 
 
@@ -52,11 +52,11 @@ describe('utils::helpers', () => {
                 );
 
                 it('can be found with two identical objects', () =>
-                    expect(isShallowSubset({a: 1}, {a: 1})).to.be.true
+                    expect(isShallowSubset({ a: 1 }, { a: 1 })).to.be.true
                 );
 
                 it('can be found with two object_0.length < object_1.length', () =>
-                    expect(isShallowSubset({a: 1}, {a: 1, b: 6})).to.be.true
+                    expect(isShallowSubset({ a: 1 }, { a: 1, b: 6 })).to.be.true
                 );
             });
         });
@@ -83,87 +83,44 @@ describe('utils::helpers', () => {
 
             describe('Object Object', () => {
                 it('experienced with object_1 empty', () =>
-                    expect(isShallowSubset({a: 5}, {})).to.be.false
+                    expect(isShallowSubset({ a: 5 }, {})).to.be.false
                 );
 
                 it('experienced with with two same length, different objects', () =>
-                    expect(isShallowSubset({a: 1}, {b: 1})).to.be.false
+                    expect(isShallowSubset({ a: 1 }, { b: 1 })).to.be.false
                 );
 
                 it('experienced with with two different length, different objects', () =>
-                    expect(isShallowSubset({a: 1, c: 7}, {b: 1, j: 10, l: null})).to.be.false
+                    expect(isShallowSubset({ a: 1, c: 7 }, { b: 1, j: 10, l: null })).to.be.false
                 );
 
                 it('experienced with two object_0.length > object_1.length', () =>
-                    expect(isShallowSubset({a: 1, b: 6}, {a: 1})).to.be.false
+                    expect(isShallowSubset({ a: 1, b: 6 }, { a: 1 })).to.be.false
                 );
             });
         });
 
         describe('irl', () => {
             const schema = {
-                email: {type: 'string'},
-                password: {type: 'string'},
-                title: {type: 'string'},
-                first_name: {type: 'string'},
-                last_names: {type: 'string'}
+                email: { type: 'string' },
+                password: { type: 'string' },
+                title: { type: 'string' },
+                first_name: { type: 'string' },
+                last_names: { type: 'string' }
             };
 
             it('should validate with good request-body', () => [
-                {email: 'fff'},
-                {title: 'sfsdf'},
-                {title: 'sfsdf', email: 'sdf'}
+                { email: 'fff' },
+                { title: 'sfsdf' },
+                { title: 'sfsdf', email: 'sdf' }
             ].map(request => expect(isShallowSubset(request, schema)).to.be.true));
 
             it('should fail with bad request-body', () => [
-                {foo: 'dsf'},
-                {bar: 'can', haz: 'baz'},
-                {title: 'foo', haz: 'baz'}
+                { foo: 'dsf' },
+                { bar: 'can', haz: 'baz' },
+                { title: 'foo', haz: 'baz' }
             ].map(request => expect(isShallowSubset(request, schema)).to.be.false));
         })
-    });
-
-    describe('uri_to_config', () => {
-        it('should work with full', () =>
-            expect(uri_to_config('postgresql://postgres:postgres@localhost/postgres')).to.deep.equal({
-                "database": "postgres",
-                "host": "localhost",
-                "identity": "postgres",
-                "pass": "postgres",
-                "password": "postgres",
-                "user": "postgres"
-            })
-        );
-
-        it('should work with minimal', () =>
-            expect(uri_to_config('postgresql://localhost')).to.deep.equal({
-                "host": "localhost",
-                "identity": "postgres",
-                "user": "postgres"
-            })
-        );
-
-        it('should work with dokku', () =>
-            expect(uri_to_config('postgres://postgres:f1d610fa5e04f3a1@dokku-postgres-se:5432/node_db')).to.deep.equal({
-                "database": "node_db",
-                "host": "dokku-postgres-se",
-                "identity": "postgres",
-                "pass": "f1d610fa5e04f3a1",
-                "password": "f1d610fa5e04f3a1",
-                "port": "5432",
-                "user": "postgres"
-            })
-        );
-
-        /*
-         it('should work with proto+host+user', () => {
-         expect(uri_to_config('postgresql://postgres:localhost')).to.deep.equal({
-         "database": "postgres",
-         "host": "localhost",
-         "user": "postgres"
-         });
-         });
-         */
     });
 
     describe('trivialWalk and populateModelRoutes', () => {
