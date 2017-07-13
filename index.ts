@@ -171,3 +171,7 @@ export const uri_to_config = (uri: string): IConnectionConfig => {
         port: comps.port || 5432
     }, user_obj);
 };
+
+export const raise = (throwable: Error | any) => { throw throwable };
+
+

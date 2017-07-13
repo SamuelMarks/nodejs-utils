@@ -55,3 +55,4 @@ export interface IConnectionConfig {
     port: number | string;
 }
 export declare const uri_to_config: (uri: string) => IConnectionConfig;
+export declare const raise: (throwable: Error | any) => void;
