@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import { readdirSync, statSync } from 'fs';
 import * as URI from 'uri-js';
 import { dirname, join, normalize, resolve, sep } from 'path';
-import { ImkdirpCb, ImkdirpOpts, IModelRoute } from 'nodejs-utils';
+import { ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from 'nodejs-utils';
+import { Response } from 'supertest';
 
 export const trivial_merge = (obj, ...objects: Array<{}>) => {
     for (const key in objects)
@@ -174,4 +175,25 @@ export const uri_to_config = (uri: string): IConnectionConfig => {
 
 export const raise = (throwable: Error | any) => { throw throwable };
 
+export const getError = (err: IncomingMessageError | Error): IncomingMessageError | Error => {
+    if (err as any === false) return null;
+    if (typeof err['jse_shortmsg'] !== 'undefined') {
+        const e: IncomingMessageError = err as IncomingMessageError;
+        return e != null && e.body && e.body.error_message ? JSON.parse(e.body.error_message) : e;
+    }
+    if (err != null && typeof err['text'] !== 'undefined')
+        err.message += ' | ' + err['text'];
+    return err;
+};
+
+export const superEndCb = (callback: TCallback<Error | IncomingMessageError, Response>) =>
+    (e: IncomingMessageError | Error, r?: Response) =>
+        callback(r != null && r.error != null ? getError(r.error) : getError(e), r);
+
+export const debugCb = (name: string, callback: TCallback<any, any>) => /* tslint:disable:no-console */
+    (e: any, r: any) => console.warn(`${name}::e =`, e, `;\n${name}::r =`, r, ';') || callback(e, r);
+
+export const uniqIgnoreCb = (callback: TCallback<Error | Chai.AssertionError | {message: string}, any>) =>
+    (err: Chai.AssertionError | Error | {message: string}, res: Response | any) =>
+        callback(err != null && err.message != null && err.message.indexOf('E_UNIQUE') === -1 ? err : void 0, res);
 
