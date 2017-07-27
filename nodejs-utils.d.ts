@@ -49,6 +49,12 @@ export interface IncomingMessageError {
     restCode: 'IncomingMessageError';
 }
 
+export interface IDependencies {
+    [key: string]: {
+        _dependencies?: string[]
+    }
+}
+
 export type TCallback<E, R> = (err?: E, res?: R) => R | void;
 export type TCallbackR<A, B, R> = (a?: A, b?: B) => R | void;
 export type strCb = TCallback<Error, string>;
@@ -60,7 +66,7 @@ export declare const trivial_merge: (obj: any, ...objects: {}[]) => any;
 export declare const isShallowSubset: (o0: {} | any[], o1: {} | any[]) => boolean;
 export declare const binarySearch: (a: any[], e: any, c?: (a: any, b: any) => boolean) => number;
 export declare const trivialWalk: (dir: string, excludeDirs?: string[]) => any;
-export declare const populateModelRoutes: (dir: string, allowedFnames?: string[]) => IModelRoute;
+export declare const populateModelRoutes: (dir: string, allowedFnames?: string[]) => Map<string, any>;
 export declare const objListToObj: (objList: {}[]) => {};
 export declare const groupBy: (array: any[], f: Function) => any[];
 export declare const getUTCDate: (now?: Date) => Date;
@@ -83,3 +89,6 @@ export declare const superEndCb: (callback: TCallback<Error | IncomingMessageErr
 export declare const debugCb: (name: string, callback: TCallback<any, any>) => (e: any, r: any) => any;
 export declare const uniqIgnoreCb: (callback: TCallback<Error | Chai.AssertionError | {message: string;}, any>) =>
     (err: Error | Chai.AssertionError | {message: string;}, res: any) => any;
+
+export declare function permute<T>(permutation: T[] | T | any): IterableIterator<T>;
+export declare const build_dep_graph: (dependencies: IDependencies[]) => Map<string, any>;
