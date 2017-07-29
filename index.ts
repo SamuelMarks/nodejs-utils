@@ -2,9 +2,8 @@ import * as fs from 'fs';
 import { readdirSync, statSync } from 'fs';
 import * as URI from 'uri-js';
 import { basename, dirname, join, normalize, resolve, sep } from 'path';
-import { ImkdirpCb, ImkdirpOpts, IncomingMessageError, TCallback } from 'nodejs-utils';
+import { IDependencies, ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from 'nodejs-utils';
 import { Response } from 'supertest';
-import { IDependencies } from './nodejs-utils';
 
 export const trivial_merge = (obj, ...objects: Array<{}>) => {
     for (const key in objects)
@@ -258,3 +257,27 @@ export const build_dep_graph = (dependencies: IDependencies[]): Map<string, any>
                     .map(fname => [fname, all_deps.get(fname)]) as any);
     throw Error('Logic error: no permutation of your models is valid. Check your dependency lists.')
 };
+
+export const groupByMap = <T>(list: Map<T, any>, keyGetter: ((key: any) => any)): Map<T, any> => {
+    const map = new Map();
+    const l = Array.from(list);
+    l.forEach(value => {
+        const key: string = keyGetter(value);
+        const collection = map.get(key);
+        if (!collection) {
+            map.set(key, [value]);
+        } else {
+            collection.push(value);
+        }
+    });
+    return map;
+};
+
+export const get_models_routes = (models_routes: Map<string, any>): IModelRoute =>
+    Array.from(groupByMap<string>(models_routes, k => k[0].slice(0, k[0].indexOf('/')))).reduce(
+        (a: {}, b) => Object.assign(a, {
+            [b[0]]: b[1].map(
+                fname_prog => ({ [basename(fname_prog[0], '.js')]: fname_prog[1] })
+            ).reduce((prev, curr) => Object.assign(prev, curr), {})
+        }), {}
+    );
