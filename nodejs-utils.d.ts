@@ -94,3 +94,4 @@ export declare function permute<T>(permutation: T[] | T | any): IterableIterator
 export declare const build_dep_graph: (dependencies: IDependencies[]) => Map<string, any>;
 export declare const groupByMap: <T>(list: Map<T, any>, keyGetter: (key: any) => any) => Map<T, any>;
 export declare const get_models_routes: (models_routes: Map<string, any>) => IModelRoute;
+export declare const model_route_to_map: (model_route: IModelRoute) => Map<string, any>;

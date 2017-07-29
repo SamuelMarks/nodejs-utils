@@ -281,3 +281,8 @@ export const get_models_routes = (models_routes: Map<string, any>): IModelRoute 
             ).reduce((prev, curr) => Object.assign(prev, curr), {})
         }), {}
     );
+
+export const model_route_to_map = (model_route: IModelRoute): Map<string, any> => new Map(
+    Object.entries(Object.keys(model_route).map(entity => Object.keys(model_route[entity]).map(
+        m_or_r => ({ [join(entity, `${m_or_r}.js`)]: model_route[entity][m_or_r] }))
+    ).reduce((a, b) => a.concat(b), []).reduce((a, b) => Object.assign(a, b), {})));
