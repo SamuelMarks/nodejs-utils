@@ -61,6 +61,7 @@ export type strCb = TCallback<Error, string>;
 export type strCbV = TCallbackR<Error, string, void>;
 export type numCb = TCallback<Error, number>;
 export type HttpStrResp = (error: Error | IncomingMessageError, response?: Response) => string;
+export type AccessTokenType = string;
 
 export declare const trivial_merge: (obj: any, ...objects: {}[]) => any;
 export declare const isShallowSubset: (o0: {} | any[], o1: {} | any[]) => boolean;
