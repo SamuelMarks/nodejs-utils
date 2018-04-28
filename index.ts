@@ -286,3 +286,5 @@ export const model_route_to_map = (model_route: IModelRoute): Map<string, any> =
     Object.entries(Object.keys(model_route).map(entity => Object.keys(model_route[entity]).map(
         m_or_r => ({ [join(entity, `${m_or_r}.js`)]: model_route[entity][m_or_r] }))
     ).reduce((a, b) => a.concat(b), []).reduce((a, b) => Object.assign(a, b), {})));
+
+export const toSentenceCase = (s: string): string => `${s[0].toLocaleUpperCase()}${s.slice(1)}`;
