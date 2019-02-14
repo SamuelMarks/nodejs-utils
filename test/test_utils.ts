@@ -139,7 +139,7 @@ describe('utils::helpers', () => {
 
                     async.map(this.tree, (dir_file: string[], cb) =>
                         async.series([
-                                call_back => mkdirP(dir_file[0], call_back),
+                                call_back => mkdirP(dir_file[0], void 0, call_back),
                                 call_back =>
                                     fs_open(path_join(...dir_file), 'w', call_back),
                                 call_back =>

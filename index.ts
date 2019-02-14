@@ -183,7 +183,7 @@ export const superEndCb = (callback: TCallback<Error | IncomingMessageError, Res
         callback(r != null && r.error != null ? getError(r.error) : getError(e), r);
 
 export const debugCb = (name: string, callback: TCallback<any, any>) => /* tslint:disable:no-console */
-    (e: any, r: any) => console.warn(`${name}::e =`, e, `;\n${name}::r =`, r, ';') || callback(e, r);
+    (e: any, r: any) => console.warn(`${name}::e =`, e, `;\n${name}::r =`, r, ';') as any || callback(e, r);
 
 export const uniqIgnoreCb = (callback: TCallback<Error | Chai.AssertionError | {message: string}, any>) =>
     (err: Chai.AssertionError | Error | {message: string}, res: Response | any) =>
