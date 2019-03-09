@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { build_dep_graph } from '../index';
 import { IDependencies } from '../nodejs-utils';
-import { writeFileSync } from 'fs';
+import { unlink, writeFileSync } from 'fs';
 
 
 export const dependencies_input: IDependencies[] = [
@@ -15,6 +15,10 @@ export const dependencies_input: IDependencies[] = [
 ];
 
 describe('build dep graph', () => {
+    after(done => {
+        unlink('delme.json', done);
+    });
+
     it('builds correctly', () => {
 
         const correct_outputs = [
@@ -22,6 +26,7 @@ describe('build dep graph', () => {
             ['foo2', 'foo3', 'foo0', 'foo1', 'foo4', 'foo5']
         ];
         const actual_output = build_dep_graph(dependencies_input);
+        // TODO: Finish this test
         writeFileSync('delme.json', JSON.stringify(actual_output, null, 4));
         let errors = [];
         correct_outputs.forEach(output => {
