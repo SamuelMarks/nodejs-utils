@@ -2,6 +2,14 @@ import { Stats } from 'fs';
 import * as restify from 'restify';
 import { Response } from 'supertest';
 
+// Too many issues with Chai namespace and typings
+interface ChaiAssertionError {
+    name: string;
+    message: string;
+    showDiff: boolean;
+    stack: string;
+}
+
 export interface ImkdirpOpts {
     fs?: {
         mkdir: (path: string | Buffer, mode: number,
@@ -89,8 +97,8 @@ export declare const getError: (err: Error | IncomingMessageError) => Error | In
 export declare const superEndCb: (callback: TCallback<Error | IncomingMessageError, Response>) =>
     (e: Error | IncomingMessageError, r?: Response) => void | Response;
 export declare const debugCb: (name: string, callback: TCallback<any, any>) => (e: any, r: any) => any;
-export declare const uniqIgnoreCb: (callback: TCallback<Error | Chai.AssertionError | {message: string;}, any>) =>
-    (err: Error | Chai.AssertionError | {message: string;}, res: any) => any;
+export declare const uniqIgnoreCb: (callback: TCallback<Error | ChaiAssertionError | {message: string;}, any>) =>
+    (err: Error | ChaiAssertionError | {message: string;}, res: any) => any;
 
 export declare function permute<T>(permutation: T[] | T | any): IterableIterator<T>;
 export declare const build_dep_graph: (dependencies: IDependencies[]) => Map<string, any>;
