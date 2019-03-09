@@ -1,6 +1,6 @@
 {
   "name": "nodejs-utils",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Miscellaneous utility functions for Node.JS",
   "main": "index.js",
   "scripts": {
@@ -28,11 +28,11 @@
     "chai": "^4.2.0",
     "mocha": "^6.0.2",
     "rimraf": "^2.6.3",
-    "supertest": "^4.0.0",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.3333"
   },
   "dependencies": {
-    "uri-js": "^4.2.2"
+    "uri-js": "^4.2.2",
+    "supertest": "^4.0.0"
   }
 }
