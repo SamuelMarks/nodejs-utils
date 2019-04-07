@@ -105,8 +105,7 @@ export const mkdirP = (dir: string, opts: ImkdirpOpts, cb?: ImkdirpCb, made?) =>
     if (typeof opts === 'function') {
         cb = <ImkdirpCb>opts;
         opts = {};
-    }
-    else if (!opts || typeof opts !== 'object')
+    } else if (!opts || typeof opts !== 'object')
         opts = { mode: <number>opts };
 
     opts.mode = opts.mode || (_0777 & (~process.umask()));
@@ -154,8 +153,7 @@ export const uri_to_config = (uri: string): IConnectionConfig => {
     if (user_pass.length === 2) {
         user_obj.user = user_pass[0];
         user_obj.password = user_pass[1];
-    }
-    else if (user_pass.length === 1 && typeof user_pass[0] === 'string' && user_pass[0].length > 0)
+    } else if (user_pass.length === 1 && typeof user_pass[0] === 'string' && user_pass[0].length > 0)
         user_obj.user = user_pass[0];
 
     return Object.assign({
@@ -242,8 +240,7 @@ export const build_dep_graph = (dependencies: IDependencies[]): Map<string, any>
             const deps = dep[k]._dependencies || dep[k]['dependencies'];
             if (deps == null) models_no_deps.set(d, k);
             else models2deps.set(d, [k, deps]);
-        }
-        else if (['admin', 'route', 'routes'].indexOf(b) > -1)
+        } else if (['admin', 'route', 'routes'].indexOf(b) > -1)
             routes.add(k);
     });
 
@@ -288,3 +285,8 @@ export const model_route_to_map = (model_route: IModelRoute): Map<string, any> =
     ).reduce((a, b) => a.concat(b), []).reduce((a, b) => Object.assign(a, b), {})));
 
 export const toSentenceCase = (s: string): string => `${s[0].toLocaleUpperCase()}${s.slice(1)}`;
+
+export const resolveIntFromObject = (obj: {}): typeof obj =>
+    Object.keys(obj)
+        .map(k => ({ [k]: isNaN(obj[k]) ? obj[k] : parseInt(obj[k]) }))
+        .reduce((a, b) => Object.assign(a, b), {});

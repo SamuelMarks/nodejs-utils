@@ -106,3 +106,4 @@ export declare const groupByMap: <T>(list: Map<T, any>, keyGetter: (key: any) =>
 export declare const get_models_routes: (models_routes: Map<string, any>) => IModelRoute;
 export declare const model_route_to_map: (model_route: IModelRoute) => Map<string, any>;
 export declare const toSentenceCase: (s: string) => string;
+export declare const resolveIntFromObject: (obj: {}) => {};
