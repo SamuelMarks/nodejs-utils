@@ -15,3 +15,9 @@ Clone [nodejs-utils-dist](https://github.com/SamuelMarks/nodejs-utils-dist) one 
 
     dst="${PWD##*/}"-dist;
     find -type f -not -path './node_modules*' -a -not -path './.git*' -a -not -path './.idea*' -a -not -path './typings*' -a -not -name '*.ts' -not -name 'ts*' | cpio -pdamv ../"$dst";
+    m='Commit message'
+    git commit -S -am "$m"
+    git push origin master
+    cd ../"$dst"
+    git commit -S -am "$m"
+    git push origin master
