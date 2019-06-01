@@ -1,7 +1,7 @@
 import * as async from 'async';
 import { mkdtemp, open as fs_open, rmdir, writeFile } from 'fs';
 import { expect } from 'chai';
-import { binarySearch, isShallowSubset, mkdirP, populateModelRoutes, trivialWalk } from '../index';
+import { binarySearch, format, isShallowSubset, mkdirP, populateModelRoutes, trivialWalk } from '../index';
 import { tmpdir } from 'os';
 import { basename, join as path_join } from 'path';
 import * as rimraf from 'rimraf';
@@ -203,6 +203,14 @@ describe('utils::helpers', () => {
                 expect(res).to.have.all.keys(keys);
                 keys.map(key => expect(res[key]).to.have.any.keys(['models', 'admin', 'routes']));
             })
+        });
+    });
+
+    describe('format', () => {
+        it('works with basic object', () => {
+            const json = { 'mises': 'was', 'was': 'right' };
+            const text = 'Mises ${mises} ${was}';
+            expect(format(text, json)).to.be.eql('Mises was right');
         });
     });
 });

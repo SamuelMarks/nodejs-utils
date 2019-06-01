@@ -290,3 +290,8 @@ export const resolveIntFromObject = (obj: {}): typeof obj =>
     Object.keys(obj)
         .map(k => ({ [k]: isNaN(obj[k]) ? obj[k] : parseInt(obj[k]) }))
         .reduce((a, b) => Object.assign(a, b), {});
+
+export const format = (s: string, args): string => {
+    for (let attr in args) if (args.hasOwnProperty(attr)) s = s.split('${' + attr + '}').join(args[attr]);
+    return s || '';
+};
