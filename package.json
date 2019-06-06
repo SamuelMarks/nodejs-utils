@@ -1,8 +1,8 @@
 {
   "name": "nodejs-utils",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Miscellaneous utility functions for Node.JS",
-  "license": "(MIT OR Apache-2.0)",
+  "license": "ISC",
   "main": "index.js",
   "scripts": {
     "test": "mocha test --recursive --require ts-node/register"
@@ -12,16 +12,15 @@
     "url": "git+https://github.com/SamuelMarks/nodejs-utils.git"
   },
   "author": "Samuel Marks <samuelmarks@gmail.com>",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/SamuelMarks/nodejs-utils/issues"
   },
   "homepage": "https://github.com/SamuelMarks/nodejs-utils#readme",
   "devDependencies": {
-    "@types/async": "^2.4.2",
+    "@types/async": "^3.0.0",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.0.4",
+    "@types/node": "^12.0.5",
     "@types/restify": "^7.2.11",
     "@types/rimraf": "2.0.2",
     "@types/supertest": "^2.0.7",
