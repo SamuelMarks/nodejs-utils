@@ -2,6 +2,7 @@
   "name": "nodejs-utils",
   "version": "0.0.20",
   "description": "Miscellaneous utility functions for Node.JS",
+  "license": "(MIT OR Apache-2.0)",
   "main": "index.js",
   "scripts": {
     "test": "mocha test --recursive --require ts-node/register"
