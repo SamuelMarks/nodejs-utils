@@ -2,8 +2,9 @@ import * as fs from 'fs';
 import { readdirSync, statSync } from 'fs';
 import * as URI from 'uri-js';
 import { basename, dirname, join, normalize, resolve, sep } from 'path';
-import { IDependencies, ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from './index.d';
 import { Response } from 'supertest';
+
+import { IDependencies, ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from './index.d';
 
 // @ts-ignore
 export const trivial_merge = (obj, ...objects: Array<{}>): typeof obj => {

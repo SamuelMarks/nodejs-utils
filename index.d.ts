@@ -1,4 +1,6 @@
 /// <reference types="chai" />
+/// <reference types="supertest" />
+/// <reference types="restify" />
 import { Response } from 'supertest';
 import { Stats } from 'fs';
 import * as restify from 'restify';
@@ -65,6 +67,7 @@ export type HttpStrResp = (error: Error | IncomingMessageError, response?: Respo
 export type AccessTokenType = string;
 export type SuperTestResp = TCallback<Error | IncomingMessageError, Response>;
 
+
 export declare const trivial_merge: (obj: any, ...objects: {}[]) => any;
 export interface config {
     user: string;
@@ -75,14 +78,14 @@ export interface config {
     identity: string;
 }
 export declare const isShallowSubset: (o0: {} | any[], o1: {} | any[]) => boolean;
-export declare const binarySearch: (a: any[], e: any, c?: (a: any, b: any) => boolean) => number;
-export declare const trivialWalk: (dir: string, excludeDirs?: string[]) => any;
+export declare const binarySearch: (a: any[], e: any, c?: (a: number, b: number) => boolean) => number;
+export declare const trivialWalk: (dir: string, excludeDirs?: string[] | undefined) => string[];
 export declare const populateModelRoutes: (dir: string, allowedFnames?: string[]) => Map<string, any>;
 export declare const objListToObj: (objList: {}[]) => {};
 export declare const groupBy: (array: any[], f: Function) => any[];
 export declare const getUTCDate: (now?: Date) => Date;
 export declare const sanitiseSchema: (schema: {}, omit: string[]) => {};
-export declare const mkdirP: (dir: string, opts: any, cb?: any, made?: any) => void;
+export declare const mkdirP: (dir: string, opts?: any, cb?: any, made?: any) => void;
 export interface IConnectionConfig {
     host: string;
     user?: string;
@@ -93,7 +96,7 @@ export interface IConnectionConfig {
 export declare const uri_to_config: (uri: string) => IConnectionConfig;
 export declare const raise: (throwable: any) => never;
 export declare const getError: (err: any) => any;
-export declare const superEndCb: (callback: any) => (e: any, r?: Response) => any;
+export declare const superEndCb: (callback: any) => (e: any, r?: Response | undefined) => any;
 export declare const debugCb: (name: string, callback: any) => (e: any, r: any) => any;
 export declare const uniqIgnoreCb: (callback: any) => (err: Error | Chai.AssertionError | {
     message: string;
