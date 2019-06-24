@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { build_dep_graph } from '../index';
-import { IDependencies } from '../nodejs-utils';
+import { IDependencies } from '../index.d';
 import { unlink, writeFileSync } from 'fs';
 
 
@@ -33,6 +33,7 @@ describe('build dep graph', () => {
             try {
                 expect(actual_output).to.be.eql(output);
             } catch (e) {
+                // @ts-ignore
                 errors.push(e);
             }
         });

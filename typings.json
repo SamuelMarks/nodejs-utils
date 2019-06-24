@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "nodejs-utils": "github:SamuelMarks/nodejs-utils/nodejs-utils.d.ts"
-  }
-}

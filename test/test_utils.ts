@@ -124,20 +124,22 @@ describe('utils::helpers', () => {
     });
 
     describe('trivialWalk and populateModelRoutes', () => {
+        let directory: string;
+        let tree: string[][];
         before('create full tree', callback =>
             mkdtemp(path_join(tmpdir(), 'nodejs-utils-test_'), (err, dir) => {
                     if (err) return callback(err);
-                    this.dir = dir;
-                    this.tree = [
-                        [this.dir, 'routes.js'],
-                        [path_join(this.dir, 'api', 'jarring'), 'routes.js'],
-                        [path_join(this.dir, 'api3', 'car'), 'models.js'],
-                        [path_join(this.dir, 'can'), 'routes.js'],
-                        [path_join(this.dir, 'jar', 'far', 'raw'), 'models.js'],
-                        [path_join(this.dir, 'node_modules', 'far', 'raw'), 'admin.js'],
+                    directory = dir;
+                    tree = [
+                        [directory, 'routes.js'],
+                        [path_join(directory, 'api', 'jarring'), 'routes.js'],
+                        [path_join(directory, 'api3', 'car'), 'models.js'],
+                        [path_join(directory, 'can'), 'routes.js'],
+                        [path_join(directory, 'jar', 'far', 'raw'), 'models.js'],
+                        [path_join(directory, 'node_modules', 'far', 'raw'), 'admin.js'],
                     ];
 
-                    async.map(this.tree, (dir_file: string[], cb) =>
+                    async.map(tree, (dir_file: string[], cb) =>
                         async.series([
                                 call_back => mkdirP(dir_file[0], void 0, call_back),
                                 call_back =>
@@ -151,54 +153,57 @@ describe('utils::helpers', () => {
         );
 
         after('delete full tree', callback =>
-            rimraf(this.dir, callback)
+            // @ts-ignore
+            rimraf(directory, callback)
         );
+        
+        let empty_dir: string;
 
         before('create empty tree', callback =>
             mkdtemp(path_join(tmpdir(), 'nodejs-utils-test_'), (err, dir) => {
                     if (err) return callback(err);
-                    this.empty_dir = dir;
+                    empty_dir = dir;
                     return callback();
                 }
             )
         );
 
         after('delete empty tree', callback =>
-            rmdir(this.empty_dir, callback)
+            rmdir(empty_dir, callback)
         );
 
         describe('trivialWalk', () => {
             it('should work on empty tree', () => {
-                const res = trivialWalk(this.empty_dir);
+                const res = trivialWalk(empty_dir);
                 expect(res).to.be.an.instanceOf(Array);
                 expect(res).to.be.empty || (() => undefined)();
             });
 
             it('should work 3 levels deep', () =>
-                expect(trivialWalk(this.dir)).to.have.members(
-                    this.tree.map((dir_file: string[]) => path_join(...dir_file))
+                expect(trivialWalk(directory)).to.have.members(
+                    tree.map((dir_file: string[]) => path_join(...dir_file))
                 )
             );
 
             it('should filter 3 levels deep', () =>
-                expect(trivialWalk(this.dir, ['node_modules'])).to.have.members(
-                    this.tree.map((dir_file: string[]) => path_join(...dir_file))
+                expect(trivialWalk(directory, ['node_modules'])).to.have.members(
+                    tree.map((dir_file: string[]) => path_join(...dir_file))
                 )
             )
         });
 
         describe('populateModelRoutes', () => {
             it('should work on empty tree', () => {
-                const res = populateModelRoutes(this.empty_dir);
+                const res = populateModelRoutes(empty_dir);
                 expect(res).to.be.an.instanceOf(Object);
                 expect(res).to.be.empty || (() => undefined)();
             });
 
             it('should work 3 levels deep', () => {
-                const res = populateModelRoutes(this.dir);
+                const res = populateModelRoutes(directory);
                 expect(res).to.be.an.instanceOf(Object);
                 const keys = [
-                    'jarring', 'car', 'can', 'raw', basename(this.dir)
+                    'jarring', 'car', 'can', 'raw', basename(directory)
                 ];
                 expect(res).to.have.all.keys(keys);
                 keys.map(key => expect(res[key]).to.have.any.keys(['models', 'admin', 'routes']));

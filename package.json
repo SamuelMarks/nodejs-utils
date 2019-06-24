@@ -1,21 +1,27 @@
 {
   "name": "@offscale/nodejs-utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Miscellaneous utility functions for Node.JS",
-  "license": "(Apache-2.0 OR MIT)",
-  "main": "index.js",
-  "scripts": {
-    "test": "mocha test --recursive --require ts-node/register"
+  "homepage": "https://github.com/SamuelMarks/nodejs-utils#readme",
+  "bugs": {
+    "url": "https://github.com/SamuelMarks/nodejs-utils/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SamuelMarks/nodejs-utils.git"
   },
-  "author": "Samuel Marks <samuelmarks@gmail.com>",
-  "bugs": {
-    "url": "https://github.com/SamuelMarks/nodejs-utils/issues"
+  "license": "(Apache-2.0 OR MIT)",
+  "author": "Samuel Marks @SamuelMarks",
+  "main": "index.js",
+  "types": "./index.d.ts",
+  "scripts": {
+    "prepare": "tsc",
+    "test": "mocha test --recursive --require ts-node/register"
   },
-  "homepage": "https://github.com/SamuelMarks/nodejs-utils#readme",
+  "dependencies": {
+    "supertest": "^4.0.2",
+    "uri-js": "^4.2.2"
+  },
   "devDependencies": {
     "@types/async": "^3.0.0",
     "@types/chai": "^4.1.7",
@@ -30,9 +36,5 @@
     "rimraf": "^2.6.3",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.2"
-  },
-  "dependencies": {
-    "uri-js": "^4.2.2",
-    "supertest": "^4.0.2"
   }
 }

@@ -2,15 +2,17 @@ import * as fs from 'fs';
 import { readdirSync, statSync } from 'fs';
 import * as URI from 'uri-js';
 import { basename, dirname, join, normalize, resolve, sep } from 'path';
-import { IDependencies, ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from 'nodejs-utils';
+import { IDependencies, ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from './index.d';
 import { Response } from 'supertest';
 
-export const trivial_merge = (obj, ...objects: Array<{}>) => {
+// @ts-ignore
+export const trivial_merge = (obj, ...objects: Array<{}>): typeof obj => {
     for (const key in objects)
         if (objects.hasOwnProperty(key)) {
             if (isNaN(parseInt(key))) obj[key] = objects[key];
             else for (const k in objects[key])
                 if (objects[key].hasOwnProperty(k))
+                // @ts-ignore
                     obj[k] = objects[key][k];
         }
     return obj;
@@ -36,15 +38,15 @@ export const isShallowSubset = (o0: {} | Array<any>, o1: {} | Array<any>): boole
     return true;
 };
 
-export const binarySearch = (a: any[], e: any, c = (a, b) => a > b) => {
+export const binarySearch = (a: any[], e: any, c = (a: number, b: number) => a > b) => {
     let u = a.length, m = 0;
     for (let l = 0; l <= u;)
         c(e, a[m = (l + u) >> 1]) ? l = m + 1 : u = e == a[m] ? -2 : m - 1;
     return u == -2 ? m : -1
 };
 
-export const trivialWalk = (dir: string, excludeDirs?: string[]) => {
-    return readdirSync(dir).reduce((list, file) => {
+export const trivialWalk = (dir: string, excludeDirs?: string[]): string[] => {
+    return readdirSync(dir).reduce((list: string[], file: string) => {
         const name = join(dir, file);
         if (statSync(name).isDirectory()) {
             if (excludeDirs && excludeDirs.length) {
@@ -70,8 +72,9 @@ export const populateModelRoutes =
 
 export const objListToObj = (objList: Array<{}>): {} => {
     /* Takes an objList without null/undefined */
-    const obj = {};
+    const obj: {[key: string]: any} = {};
     objList.forEach(o => ((key: string) => obj[key] = obj[key] != null ?
+        // @ts-ignore
         trivial_merge(obj[key], o[key]) : o[key])(Object.keys(o) as string[] | any));
     return obj;
 };
@@ -80,6 +83,7 @@ export const groupBy = (array: Array<any>, f: Function): typeof array => {
     const groups = {};
     array.forEach(o => {
         const group = JSON.stringify(f(o));
+        // @ts-ignore
         groups[group] = groups[group] || [];
         groups[group].push(o);
     });
@@ -99,39 +103,43 @@ export const sanitiseSchema = (schema: {}, omit: Array<string>): {} =>
 const _0777 = parseInt('0777', 8);
 
 
-export const mkdirP = (dir: string, opts: ImkdirpOpts, cb?: ImkdirpCb, made?) => {
+export const mkdirP = (dir: string, opts?: ImkdirpOpts, cb?: ImkdirpCb, made?) => {
     // Refactored from https://github.com/substack/node-mkdirp
     dir = resolve(dir);
     if (typeof opts === 'function') {
         cb = <ImkdirpCb>opts;
         opts = {};
     } else if (!opts || typeof opts !== 'object')
-        opts = { mode: <number>opts };
+        opts = { mode: opts as unknown as number };
 
     opts.mode = opts.mode || (_0777 & (~process.umask()));
+    // @ts-ignore
     opts.fs = opts.fs || fs;
 
     if (!made) made = null;
 
-    cb = cb || (() => undefined);
+    const callb = (cb || (() => undefined)) as ImkdirpCb;
 
+    // @ts-ignore
     opts.fs.mkdir(dir, opts.mode, (error) => {
         if (error != null) {
             made = made || dir;
-            return cb(null, made);
+            return callb(null, made);
         }
+        // @ts-ignore
         switch (error.code) {
             case 'ENOENT':
                 mkdirP(dirname(dir), opts, (err, made) => {
-                    if (err) cb(err, made);
+                    if (err) callb(err, made);
                     else mkdirP(dir, opts, cb, made);
                 });
                 break;
 
             default:
+                // @ts-ignore
                 opts.fs.stat(dir, (e, stat) => {
-                    if (e || !stat.isDirectory()) cb(error || e, made);
-                    else cb(null, made);
+                    if (e || !stat.isDirectory()) callb(error || e, made);
+                    else callb(null, made);
                 });
         }
     });
@@ -147,7 +155,8 @@ export interface IConnectionConfig {
 
 export const uri_to_config = (uri: string): IConnectionConfig => {
     const comps: URI.URIComponents = URI.parse(uri);
-    const user_pass = comps.userinfo.split(':');
+    if (comps == null) throw TypeError('Unable to parse URI');
+    const user_pass = comps.userinfo && comps.userinfo.split(':') || [];
     const user_obj: {user?: string, password?: string} = {};
 
     if (user_pass.length === 2) {
@@ -157,8 +166,8 @@ export const uri_to_config = (uri: string): IConnectionConfig => {
         user_obj.user = user_pass[0];
 
     return Object.assign({
-        host: comps.host,
-        database: comps.path.length > 2 ? comps.path.slice(1) : undefined,
+        host: comps.host as string,
+        database: comps.path && comps.path.length > 2 ? comps.path.slice(1) : '',
         port: comps.port || 5432
     }, user_obj);
 };
@@ -166,7 +175,10 @@ export const uri_to_config = (uri: string): IConnectionConfig => {
 export const raise = (throwable: Error | any) => { throw throwable };
 
 export const getError = (err: IncomingMessageError | Error): IncomingMessageError | Error => {
-    if (err as any === false) return null;
+    if (err as any === false) {
+        // @ts-ignore
+        return null;
+    }
     if (typeof err['jse_shortmsg'] !== 'undefined') {
         const e: IncomingMessageError = err as IncomingMessageError;
         return e != null && e.body && e.body.error_message ? JSON.parse(e.body.error_message) : e;
@@ -220,7 +232,7 @@ export const build_dep_graph = (dependencies: IDependencies[]): Map<string, any>
                       folder_names: string[]): boolean => {
         const deps_existent = new Set<string>(dep_free);
         for (const folder_name of folder_names)
-            if (models2deps.get(folder_name)[1].some(dep => !deps_existent.has(dep)))
+            if (models2deps.get(folder_name)![1].some(dep => !deps_existent.has(dep)))
                 return false;
             else deps_existent.add(folder_name);
         deps_existent.clear();
@@ -249,7 +261,7 @@ export const build_dep_graph = (dependencies: IDependencies[]): Map<string, any>
             return new Map<string, any>(
                 Array
                     .from(models_no_deps.values())
-                    .concat(models2deps_perm.map(folder_name => models2deps.get(folder_name)[0]))
+                    .concat(models2deps_perm.map(folder_name => models2deps.get(folder_name)![0]))
                     .concat(Array.from(routes.values()))
                     .map(fname => [fname, all_deps.get(fname)]) as any);
     throw Error('Logic error: no permutation of your models is valid. Check your dependency lists.')

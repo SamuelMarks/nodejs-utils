@@ -19,8 +19,9 @@ describe('populateModelRoutes', () => {
                 return callb();
             }),
             callb => mkdir(tmp_root, callb),
+            // @ts-ignore
             callb => map(dependencies_input.map(o => {
-                const k = Object.keys(o)[0];
+                const k: string = Object.keys(o)[0];
                 return [path_join(tmp_root, k), o[k]]
             }), (dir_deps: [string, {_dependencies?: string[]}], c_b) => {
                 const [dir, deps] = dir_deps;
@@ -51,5 +52,8 @@ describe('populateModelRoutes', () => {
         ]);
     });
 
-    after(done => rimraf(dirname(tmp_root), done));
+    after(done => {
+        // @ts-ignore
+        rimraf(dirname(tmp_root), done);
+    });
 });
