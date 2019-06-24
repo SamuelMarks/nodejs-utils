@@ -8,3 +8,4 @@
 !*.d.ts
 !*.md
 !LICENSE-*
+!node_modules/@types
