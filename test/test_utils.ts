@@ -1,10 +1,11 @@
 import * as async from 'async';
 import { mkdtemp, open as fs_open, rmdir, writeFile } from 'fs';
 import { expect } from 'chai';
-import { binarySearch, format, isShallowSubset, mkdirP, populateModelRoutes, trivialWalk } from '../index';
 import { tmpdir } from 'os';
 import { basename, join as path_join } from 'path';
 import * as rimraf from 'rimraf';
+
+import { binarySearch, format, isShallowSubset, mkdirP, populateModelRoutes, trivialWalk } from '../index';
 
 
 describe('utils::helpers', () => {
@@ -156,7 +157,7 @@ describe('utils::helpers', () => {
             // @ts-ignore
             rimraf(directory, callback)
         );
-        
+
         let empty_dir: string;
 
         before('create empty tree', callback =>

@@ -4,7 +4,7 @@ import * as URI from 'uri-js';
 import { basename, dirname, join, normalize, resolve, sep } from 'path';
 import { Response } from 'supertest';
 
-import { IDependencies, ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from './index.d';
+import { IDependencies, ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from './interfaces.d';
 
 // @ts-ignore
 export const trivial_merge = (obj, ...objects: Array<{}>): typeof obj => {

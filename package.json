@@ -1,6 +1,6 @@
 {
   "name": "@offscale/nodejs-utils",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Miscellaneous utility functions for Node.JS",
   "homepage": "https://github.com/SamuelMarks/nodejs-utils#readme",
   "bugs": {
@@ -14,6 +14,7 @@
   "author": "Samuel Marks @SamuelMarks",
   "main": "index.js",
   "types": "./index.d.ts",
+  "typings": "./index.d.ts",
   "scripts": {
     "prepare": "tsc",
     "test": "mocha test --recursive --require ts-node/register"

@@ -6,13 +6,15 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "declaration": false,
+    "declaration": true,
     "noImplicitAny": false,
     "noImplicitUseStrict": false,
     "removeComments": true,
     "noLib": false,
     "preserveConstEnums": true,
     "suppressImplicitAnyIndexErrors": true,
-    "typeRoots" : ["./node_modules/@types"]
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
   }
 }

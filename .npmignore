@@ -2,7 +2,8 @@
 **
 
 # include whitelist
-!lib/**
+!lib/*
+!lib/test/*
 !test/*.js
 !*.js*
 !*.d.ts

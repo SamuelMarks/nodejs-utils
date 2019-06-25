@@ -1,8 +1,8 @@
 import { expect } from 'chai';
+import { unlink, writeFileSync } from 'fs';
 
 import { build_dep_graph } from '../index';
-import { IDependencies } from '../index.d';
-import { unlink, writeFileSync } from 'fs';
+import { IDependencies } from '../interfaces.d';
 
 
 export const dependencies_input: IDependencies[] = [
@@ -20,7 +20,6 @@ describe('build dep graph', () => {
     });
 
     it('builds correctly', () => {
-
         const correct_outputs = [
             ['foo4', 'foo2', 'foo3', 'foo0', 'foo1', 'foo5'],
             ['foo2', 'foo3', 'foo0', 'foo1', 'foo4', 'foo5']
