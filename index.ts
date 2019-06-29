@@ -190,8 +190,10 @@ export const getError = (err: IncomingMessageError | Error): IncomingMessageErro
 };
 
 export const superEndCb = (callback: TCallback<Error | IncomingMessageError, Response>) =>
-    (e: IncomingMessageError | Error, r?: Response) =>
-        callback(r != null && r.error != null ? getError(r.error) : getError(e), r);
+    (e: IncomingMessageError | Error, r?: Response) => callback(supertestGetError(e, r), r);
+
+export const supertestGetError = (e: IncomingMessageError | Error, r?: Response): IncomingMessageError | Error =>
+    r != null && r.error != null ? getError(r.error) : getError(e);
 
 export const debugCb = (name: string, callback: TCallback<any, any>) => /* tslint:disable:no-console */
     (e: any, r: any) => console.warn(`${name}::e =`, e, `;\n${name}::r =`, r, ';') as any || callback(e, r);
