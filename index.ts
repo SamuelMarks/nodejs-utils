@@ -310,3 +310,7 @@ export const format = (s: string, args): string => {
     for (let attr in args) if (args.hasOwnProperty(attr)) s = s.split('${' + attr + '}').join(args[attr]);
     return s || '';
 };
+
+export const removeNulls = (a: any[]): typeof a => a.filter(e => e != null);
+
+export const unwrapIfOneElement = (a: any[]): typeof a | typeof a[0] => a.length === 1 ? a[0] : a;

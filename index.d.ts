@@ -30,6 +30,7 @@ export declare const uri_to_config: (uri: string) => IConnectionConfig;
 export declare const raise: (throwable: any) => never;
 export declare const getError: (err: Error | IncomingMessageError) => Error | IncomingMessageError;
 export declare const superEndCb: (callback: TCallback<Error | IncomingMessageError, Response>) => (e: Error | IncomingMessageError, r?: Response | undefined) => void | Response;
+export declare const supertestGetError: (e: Error | IncomingMessageError, r?: Response | undefined) => Error | IncomingMessageError;
 export declare const debugCb: (name: string, callback: TCallback<any, any>) => (e: any, r: any) => any;
 export declare const uniqIgnoreCb: (callback: TCallback<Error | Chai.AssertionError | {
     message: string;
@@ -44,3 +45,5 @@ export declare const model_route_to_map: (model_route: IModelRoute) => Map<strin
 export declare const toSentenceCase: (s: string) => string;
 export declare const resolveIntFromObject: (obj: {}) => {};
 export declare const format: (s: string, args: any) => string;
+export declare const removeNulls: (a: any[]) => any[];
+export declare const unwrapIfOneElement: (a: any[]) => any;
