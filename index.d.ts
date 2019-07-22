@@ -1,6 +1,6 @@
 /// <reference types="chai" />
 import { Response } from 'supertest';
-import { IDependencies, ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from './interfaces.d';
+import { IDependencies, IErrorResponse, ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from './interfaces.d';
 export declare const trivial_merge: (obj: any, ...objects: {}[]) => any;
 export interface config {
     user: string;
@@ -47,3 +47,4 @@ export declare const resolveIntFromObject: (obj: {}) => {};
 export declare const format: (s: string, args: any) => string;
 export declare const removeNulls: (a: any[]) => any[];
 export declare const unwrapIfOneElement: (a: any[]) => any;
+export declare const exceptionToErrorResponse: (error: any) => IErrorResponse;

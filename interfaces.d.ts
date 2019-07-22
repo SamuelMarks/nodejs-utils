@@ -55,6 +55,12 @@ export interface IDependencies {
     }
 }
 
+export interface IErrorResponse {
+    code: string;
+    error: string;
+    error_message: string;
+}
+
 export type TCallback<E, R> = (err?: E, res?: R) => R | void;
 export type TCallbackR<A, B, R> = (a?: A, b?: B) => R | void;
 export type strCb = TCallback<Error, string>;

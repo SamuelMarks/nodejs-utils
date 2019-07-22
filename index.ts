@@ -1,10 +1,19 @@
 import * as fs from 'fs';
 import { readdirSync, statSync } from 'fs';
-import * as URI from 'uri-js';
 import { basename, dirname, join, normalize, resolve, sep } from 'path';
+
+import * as URI from 'uri-js';
 import { Response } from 'supertest';
 
-import { IDependencies, ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from './interfaces.d';
+import {
+    IDependencies,
+    IErrorResponse,
+    ImkdirpCb,
+    ImkdirpOpts,
+    IModelRoute,
+    IncomingMessageError,
+    TCallback
+} from './interfaces.d';
 
 // @ts-ignore
 export const trivial_merge = (obj, ...objects: Array<{}>): typeof obj => {
@@ -314,3 +323,24 @@ export const format = (s: string, args): string => {
 export const removeNulls = (a: any[]): typeof a => a.filter(e => e != null);
 
 export const unwrapIfOneElement = (a: any[]): typeof a | typeof a[0] => a.length === 1 ? a[0] : a;
+
+export const exceptionToErrorResponse = (error: any): IErrorResponse => {
+    const hasJseInfo = (e: {jse_info: IErrorResponse}) => ({
+        code: e.jse_info.code,
+        error: e.jse_info.error,
+        error_message: e.jse_info.error_message
+    });
+
+    if (error.jse_info) return hasJseInfo(error);
+    else if (error.text)
+        try {
+            return hasJseInfo({ jse_info: JSON.parse(error.text) });
+        } catch (e) {
+            return {
+                code: 'UnknownError',
+                error: 'UnknownError',
+                error_message: error.text
+            };
+        }
+    else throw TypeError(`Unable to parse out IError object from input: ${error}`);
+};
