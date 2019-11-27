@@ -48,3 +48,4 @@ export declare const format: (s: string, args: any) => string;
 export declare const removeNulls: (a: any[]) => any[];
 export declare const unwrapIfOneElement: (a: any[]) => any;
 export declare const exceptionToErrorResponse: (error: any) => IErrorResponse;
+export declare const getFunctionParameters: (func?: Function | undefined) => string[];

@@ -22,7 +22,7 @@ export const trivial_merge = (obj, ...objects: Array<{}>): typeof obj => {
             if (isNaN(parseInt(key))) obj[key] = objects[key];
             else for (const k in objects[key])
                 if (objects[key].hasOwnProperty(k))
-                // @ts-ignore
+                    // @ts-ignore
                     obj[k] = objects[key][k];
         }
     return obj;
@@ -343,4 +343,23 @@ export const exceptionToErrorResponse = (error: any): IErrorResponse => {
             };
         }
     else throw TypeError(`Unable to parse out IError object from input: ${error}`);
+};
+
+const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+const ARGUMENT_NAMES = /(?:^|,)\s*([^\s,=]+)/g;
+
+// Adapted from https://stackoverflow.com/a/29123804
+export const getFunctionParameters = (func?: Function): string[] => {
+    if (func == null) return [];
+    const fnStr = func.toString().replace(STRIP_COMMENTS, '');
+    const argsList = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')'));
+    const result = argsList.match(ARGUMENT_NAMES);
+
+    if (result === null)
+        return [];
+
+    const stripped: string[] = [];
+    for (let i = 0; i < result.length; i++)
+        stripped.push(result[i].replace(/[\s,]/g, ''));
+    return stripped;
 };
