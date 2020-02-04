@@ -1,6 +1,6 @@
 {
   "name": "@offscale/nodejs-utils",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Miscellaneous utility functions for Node.JS",
   "homepage": "https://github.com/SamuelMarks/nodejs-utils#readme",
   "bugs": {
@@ -24,18 +24,18 @@
     "uri-js": "^4.2.2"
   },
   "devDependencies": {
-    "@types/async": "^3.0.3",
-    "@types/chai": "^4.2.5",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^12.12.14",
+    "@types/async": "^3.0.7",
+    "@types/chai": "^4.2.8",
+    "@types/mocha": "^7.0.1",
+    "@types/node": "^13.7.0",
     "@types/restify": "^8.4.2",
     "@types/rimraf": "2.0.3",
     "@types/supertest": "^2.0.8",
-    "async": "^3.1.0",
+    "async": "^3.1.1",
     "chai": "^4.2.0",
-    "mocha": "^6.2.2",
-    "rimraf": "^3.0.0",
-    "ts-node": "^8.5.2",
-    "typescript": "^3.7.2"
+    "mocha": "^7.0.1",
+    "rimraf": "^3.0.1",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
   }
 }
