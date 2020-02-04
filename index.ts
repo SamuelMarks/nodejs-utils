@@ -132,7 +132,7 @@ export const mkdirP = (dir: string, opts?: ImkdirpOpts, cb?: ImkdirpCb, made?) =
 
     // @ts-ignore
     opts.fs.mkdir(dir, opts.mode, (error) => {
-        if (error != null) {
+        if (error == null) {
             made = made || dir;
             return callb(null, made);
         }

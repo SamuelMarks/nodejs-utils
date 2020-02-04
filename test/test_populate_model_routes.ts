@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, readFile, writeFile } from 'fs';
 import { dirname, join as path_join } from 'path';
 import { map, series, waterfall } from 'async';
 import { expect } from 'chai';
-import * as rimraf from 'rimraf';
+import { default as rimraf } from 'rimraf';
 
 import { populateModelRoutes } from '../index';
 import { dependencies_input } from './test_build_dep_graph';
