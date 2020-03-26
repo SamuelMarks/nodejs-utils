@@ -202,7 +202,7 @@ export const superEndCb = (callback: TCallback<Error | IncomingMessageError, Res
     (e: IncomingMessageError | Error, r?: Response) => callback(supertestGetError(e, r), r);
 
 export const supertestGetError = (e: IncomingMessageError | Error, r?: Response): IncomingMessageError | Error =>
-    r != null && r.error != null ? getError(r.error) : getError(e);
+    getError(r != null && r.hasOwnProperty('error') && r.error != null  ? (r as {error: typeof e}).error : e);
 
 export const debugCb = (name: string, callback: TCallback<any, any>) => /* tslint:disable:no-console */
     (e: any, r: any) => console.warn(`${name}::e =`, e, `;\n${name}::r =`, r, ';') as any || callback(e, r);
