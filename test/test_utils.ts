@@ -1,11 +1,11 @@
 import * as async from 'async';
-import { mkdtemp, open as fs_open, rmdir, writeFile } from 'fs';
+import { mkdir, mkdtemp, open as fs_open, rmdir, writeFile } from 'fs';
 import { expect } from 'chai';
 import { tmpdir } from 'os';
 import { basename, join as path_join } from 'path';
 import {default as rimraf} from 'rimraf';
 
-import { binarySearch, format, isShallowSubset, mkdirP, populateModelRoutes, trivialWalk } from '../index';
+import { binarySearch, format, isShallowSubset, populateModelRoutes, trivialWalk } from '../index';
 
 
 describe('utils::helpers', () => {
@@ -142,7 +142,7 @@ describe('utils::helpers', () => {
 
                     async.map(tree, (dir_file: string[], cb) =>
                         async.series([
-                                call_back => mkdirP(dir_file[0], void 0, call_back),
+                                call_back => mkdir(dir_file[0], { recursive: true }, call_back),
                                 call_back =>
                                     fs_open(path_join(...dir_file), 'w', call_back),
                                 call_back =>

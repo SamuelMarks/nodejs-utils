@@ -1,7 +1,7 @@
 /// <reference types="chai" />
 import { Response } from 'supertest';
-import { IDependencies, IErrorResponse, ImkdirpCb, ImkdirpOpts, IModelRoute, IncomingMessageError, TCallback } from './interfaces.d';
-export declare const trivial_merge: (obj: any, ...objects: {}[]) => any;
+import { IDependencies, IErrorResponse, IModelRoute, IncomingMessageError, TCallback } from './interfaces.d';
+export declare const trivial_merge: (obj: any, ...objects: Array<{}>) => any;
 export interface config {
     user: string;
     password?: string;
@@ -10,15 +10,14 @@ export interface config {
     database?: string;
     identity: string;
 }
-export declare const isShallowSubset: (o0: {} | any[], o1: {} | any[]) => boolean;
+export declare const isShallowSubset: (o0: {} | Array<any>, o1: {} | Array<any>) => boolean;
 export declare const binarySearch: (a: any[], e: any, c?: (a: number, b: number) => boolean) => number;
 export declare const trivialWalk: (dir: string, excludeDirs?: string[] | undefined) => string[];
 export declare const populateModelRoutes: (dir: string, allowedFnames?: string[]) => Map<string, any>;
-export declare const objListToObj: (objList: {}[]) => {};
-export declare const groupBy: (array: any[], f: Function) => any[];
+export declare const objListToObj: (objList: Array<{}>) => {};
+export declare const groupBy: (array: Array<any>, f: Function) => any[];
 export declare const getUTCDate: (now?: Date) => Date;
-export declare const sanitiseSchema: (schema: {}, omit: string[]) => {};
-export declare const mkdirP: (dir: string, opts?: ImkdirpOpts | undefined, cb?: ImkdirpCb | undefined, made?: any) => void;
+export declare const sanitiseSchema: (schema: {}, omit: Array<string>) => {};
 export interface IConnectionConfig {
     host: string;
     user?: string;
@@ -27,16 +26,16 @@ export interface IConnectionConfig {
     port: number | string;
 }
 export declare const uri_to_config: (uri: string) => IConnectionConfig;
-export declare const raise: (throwable: any) => never;
-export declare const getError: (err: Error | IncomingMessageError) => Error | IncomingMessageError;
-export declare const superEndCb: (callback: TCallback<Error | IncomingMessageError, Response>) => (e: Error | IncomingMessageError, r?: Response | undefined) => void | Response;
-export declare const supertestGetError: (e: Error | IncomingMessageError, r?: Response | undefined) => Error | IncomingMessageError;
+export declare const raise: (throwable: Error | any) => never;
+export declare const getError: (err: IncomingMessageError | Error) => IncomingMessageError | Error;
+export declare const superEndCb: (callback: TCallback<Error | IncomingMessageError, Response>) => (e: IncomingMessageError | Error, r?: Response | undefined) => void | Response;
+export declare const supertestGetError: (e: IncomingMessageError | Error, r?: Response | undefined) => IncomingMessageError | Error;
 export declare const debugCb: (name: string, callback: TCallback<any, any>) => (e: any, r: any) => any;
 export declare const uniqIgnoreCb: (callback: TCallback<Error | Chai.AssertionError | {
     message: string;
-}, any>) => (err: Error | Chai.AssertionError | {
+}, any>) => (err: Chai.AssertionError | Error | {
     message: string;
-}, res: any) => any;
+}, res: Response | any) => any;
 export declare function permute<T>(permutation: T[] | T | any): IterableIterator<T>;
 export declare const build_dep_graph: (dependencies: IDependencies[]) => Map<string, any>;
 export declare const groupByMap: <T>(list: Map<T, any>, keyGetter: (key: any) => any) => Map<T, any>;

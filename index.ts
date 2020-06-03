@@ -110,51 +110,6 @@ export const sanitiseSchema = (schema: {}, omit: Array<string>): {} =>
         { [k]: k === 'required' ? schema[k].filter(x => omit.indexOf(x) === -1) : schema[k] }
     )));
 
-const _0777 = parseInt('0777', 8);
-
-
-export const mkdirP = (dir: string, opts?: ImkdirpOpts, cb?: ImkdirpCb, made?) => {
-    // Refactored from https://github.com/substack/node-mkdirp
-    dir = resolve(dir);
-    if (typeof opts === 'function') {
-        cb = <ImkdirpCb>opts;
-        opts = {};
-    } else if (!opts || typeof opts !== 'object')
-        opts = { mode: opts as unknown as number };
-
-    opts.mode = opts.mode || (_0777 & (~process.umask()));
-    // @ts-ignore
-    opts.fs = opts.fs || fs;
-
-    if (!made) made = null;
-
-    const callb = (cb || (() => undefined)) as ImkdirpCb;
-
-    // @ts-ignore
-    opts.fs.mkdir(dir, opts.mode, (error) => {
-        if (error == null) {
-            made = made || dir;
-            return callb(null, made);
-        }
-        // @ts-ignore
-        switch (error.code) {
-            case 'ENOENT':
-                mkdirP(dirname(dir), opts, (err, made) => {
-                    if (err) callb(err, made);
-                    else mkdirP(dir, opts, cb, made);
-                });
-                break;
-
-            default:
-                // @ts-ignore
-                opts.fs.stat(dir, (e, stat) => {
-                    if (e || !stat.isDirectory()) callb(error || e, made);
-                    else callb(null, made);
-                });
-        }
-    });
-};
-
 export interface IConnectionConfig {
     host: string;
     user?: string;
