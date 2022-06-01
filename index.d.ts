@@ -12,7 +12,7 @@ export interface config {
 }
 export declare const isShallowSubset: (o0: {} | Array<any>, o1: {} | Array<any>) => boolean;
 export declare const binarySearch: (a: any[], e: any, c?: (a: number, b: number) => boolean) => number;
-export declare const trivialWalk: (dir: string, excludeDirs?: string[] | undefined) => string[];
+export declare const trivialWalk: (dir: string, excludeDirs?: string[]) => string[];
 export declare const populateModelRoutes: (dir: string, allowedFnames?: string[]) => Map<string, any>;
 export declare const objListToObj: (objList: Array<{}>) => {};
 export declare const groupBy: (array: Array<any>, f: Function) => any[];
@@ -28,8 +28,8 @@ export interface IConnectionConfig {
 export declare const uri_to_config: (uri: string) => IConnectionConfig;
 export declare const raise: (throwable: Error | any) => never;
 export declare const getError: (err: IncomingMessageError | Error) => IncomingMessageError | Error;
-export declare const superEndCb: (callback: TCallback<Error | IncomingMessageError, Response>) => (e: IncomingMessageError | Error, r?: Response | undefined) => void | Response;
-export declare const supertestGetError: (e: IncomingMessageError | Error, r?: Response | undefined) => IncomingMessageError | Error;
+export declare const superEndCb: (callback: TCallback<Error | IncomingMessageError, Response>) => (e: IncomingMessageError | Error, r?: Response) => void | Response;
+export declare const supertestGetError: (e: IncomingMessageError | Error, r?: Response) => IncomingMessageError | Error;
 export declare const debugCb: (name: string, callback: TCallback<any, any>) => (e: any, r: any) => any;
 export declare const uniqIgnoreCb: (callback: TCallback<Error | Chai.AssertionError | {
     message: string;
@@ -47,4 +47,4 @@ export declare const format: (s: string, args: any) => string;
 export declare const removeNulls: (a: any[]) => any[];
 export declare const unwrapIfOneElement: (a: any[]) => any;
 export declare const exceptionToErrorResponse: (error: any) => IErrorResponse;
-export declare const getFunctionParameters: (func?: Function | undefined) => string[];
+export declare const getFunctionParameters: (func?: Function) => string[];
