@@ -1,30 +1,34 @@
+import { describe, after, before, it } from "node:test";
+import { mkdir, mkdtemp, open as fs_open, rm, writeFile } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { basename, dirname, join as path_join } from 'node:path';
+import assert from "node:assert/strict";
+
 import * as async from 'async';
-import { mkdir, mkdtemp, open as fs_open, rmdir, writeFile } from 'fs';
-import { expect } from 'chai';
-import { tmpdir } from 'os';
-import { basename, join as path_join } from 'path';
-import {default as rimraf} from 'rimraf';
 
 import { binarySearch, format, isShallowSubset, populateModelRoutes, trivialWalk } from '../index';
 
 
 describe('utils::helpers', () => {
     describe('binarySearch', () => {
-        const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        const comparator = (a, b) => a > b;
+        const array: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        const comparator = (a: number, b: typeof a): boolean => a > b;
 
-        it('should find each element', () =>
-            array.map(elem => expect(binarySearch(array, elem, comparator)).to.be.gt(-1))
+        it('should find each element', {}, () =>
+            array.forEach(elem =>
+                assert.deepStrictEqual(binarySearch(array, elem, comparator) > -1, true)
+            )
         );
 
-        it('should not find an element', () =>
-            [50, -1, 0, null, 'hello', undefined, '', NaN, {}, []].map(
-                elem => expect(binarySearch(array, elem, comparator)).to.be.lte(-1)
+        it('should not find an element', {}, () =>
+            [50, -1, 0, null, 'hello', undefined, '', NaN, {}, []].forEach(
+                elem =>
+                    assert.deepStrictEqual(binarySearch(array, elem, comparator) <= -1, true)
             )
         );
 
         it('should handle empty list', () =>
-            expect(binarySearch([], 5, comparator)).to.be.lte(-1)
+            assert.deepStrictEqual(binarySearch([], 5, comparator) <= -1, true)
         );
     });
 
@@ -32,32 +36,32 @@ describe('utils::helpers', () => {
         describe('success', () => {
             describe('[number] [number]', () => {
                 it('can be found with two empty lists', () =>
-                    expect(isShallowSubset([], [])).to.be.true
+                    assert.deepStrictEqual(isShallowSubset([], []), true)
                 );
 
                 it('can be found with two identical lists', () =>
-                    expect(isShallowSubset([1, 2, 3], [1, 2, 3])).to.be.true
+                    assert.deepStrictEqual(isShallowSubset([1, 2, 3], [1, 2, 3]), true)
                 );
 
                 it('can be found with two identical, differently ordered lists', () =>
-                    expect(isShallowSubset([1, 2, 3], [3, 2, 1])).to.be.true
+                    assert.deepStrictEqual(isShallowSubset([1, 2, 3], [3, 2, 1]), true)
                 );
 
                 it('can be found with array_0.length < array_1.length', () =>
-                    expect(isShallowSubset([1, 2, 5], [1, 2, 5, 6])).to.be.true
+                    assert.deepStrictEqual(isShallowSubset([1, 2, 5], [1, 2, 5, 6]), true)
                 );
             });
             describe('Object Object', () => {
                 it('can be found with two empty objects', () =>
-                    expect(isShallowSubset({}, {})).to.be.true
+                    assert.deepStrictEqual(isShallowSubset({}, {}), true)
                 );
 
                 it('can be found with two identical objects', () =>
-                    expect(isShallowSubset({ a: 1 }, { a: 1 })).to.be.true
+                    assert.deepStrictEqual(isShallowSubset({ a: 1 }, { a: 1 }), true)
                 );
 
                 it('can be found with two object_0.length < object_1.length', () =>
-                    expect(isShallowSubset({ a: 1 }, { a: 1, b: 6 })).to.be.true
+                    assert.deepStrictEqual(isShallowSubset({ a: 1 }, { a: 1, b: 6 }), true)
                 );
             });
         });
@@ -65,38 +69,38 @@ describe('utils::helpers', () => {
         describe('failure', () => {
             describe('[number] [number]', () => {
                 it('experienced with array_1 empty', () =>
-                    expect(isShallowSubset([5], [])).to.be.false
+                    assert.deepStrictEqual(isShallowSubset([5], []), false)
                 );
 
                 it('experienced with two different, same sized lists', () =>
-                    expect(isShallowSubset([1, 2, 7], [2, 2, 5])).to.be.false
+                    assert.deepStrictEqual(isShallowSubset([1, 2, 7], [2, 2, 5]), false)
                 );
 
                 it('experienced with two different, different sized lists', () => {
-                    it('list 0', () => expect(isShallowSubset([7, 1, 2, 5], [10, 35, 2, 2, 5])).to.be.false);
-                    it('list 1', () => expect(isShallowSubset([1, 2, 5, 6], [2, 2, 5])).to.be.false);
+                    it('list 0', () => assert.deepStrictEqual(isShallowSubset([7, 1, 2, 5], [10, 35, 2, 2, 5]), false));
+                    it('list 1', () => assert.deepStrictEqual(isShallowSubset([1, 2, 5, 6], [2, 2, 5]), false));
                 });
 
                 it('experienced with array_0.length > array_1.length', () =>
-                    expect(isShallowSubset([1, 2, 5, 6], [1, 2, 5])).to.be.false
+                    assert.deepStrictEqual(isShallowSubset([1, 2, 5, 6], [1, 2, 5]), false)
                 );
             });
 
             describe('Object Object', () => {
                 it('experienced with object_1 empty', () =>
-                    expect(isShallowSubset({ a: 5 }, {})).to.be.false
+                    assert.deepStrictEqual(isShallowSubset({ a: 5 }, {}), false)
                 );
 
                 it('experienced with with two same length, different objects', () =>
-                    expect(isShallowSubset({ a: 1 }, { b: 1 })).to.be.false
+                    assert.deepStrictEqual(isShallowSubset({ a: 1 }, { b: 1 }), false)
                 );
 
                 it('experienced with with two different length, different objects', () =>
-                    expect(isShallowSubset({ a: 1, c: 7 }, { b: 1, j: 10, l: null })).to.be.false
+                    assert.deepStrictEqual(isShallowSubset({ a: 1, c: 7 }, { b: 1, j: 10, l: null }), false)
                 );
 
                 it('experienced with two object_0.length > object_1.length', () =>
-                    expect(isShallowSubset({ a: 1, b: 6 }, { a: 1 })).to.be.false
+                    assert.deepStrictEqual(isShallowSubset({ a: 1, b: 6 }, { a: 1 }), false)
                 );
             });
         });
@@ -114,20 +118,21 @@ describe('utils::helpers', () => {
                 { email: 'fff' },
                 { title: 'sfsdf' },
                 { title: 'sfsdf', email: 'sdf' }
-            ].map(request => expect(isShallowSubset(request, schema)).to.be.true));
+            ].forEach(request => assert.deepStrictEqual(isShallowSubset(request, schema), true)));
 
             it('should fail with bad request-body', () => [
                 { foo: 'dsf' },
                 { bar: 'can', haz: 'baz' },
                 { title: 'foo', haz: 'baz' }
-            ].map(request => expect(isShallowSubset(request, schema)).to.be.false));
+            ].forEach(request => assert.deepStrictEqual(isShallowSubset(request, schema), false)));
         })
     });
 
     describe('trivialWalk and populateModelRoutes', () => {
         let directory: string;
         let tree: string[][];
-        before('create full tree', callback =>
+        // create full tree
+        before((t, callback) =>
             mkdtemp(path_join(tmpdir(), 'nodejs-utils-test_'), (err, dir) => {
                     if (err) return callback(err);
                     directory = dir;
@@ -153,14 +158,15 @@ describe('utils::helpers', () => {
             )
         );
 
-        after('delete full tree', callback =>
-            // @ts-ignore
-            rimraf(directory, callback)
+        // delete full tree
+        after((__t, done) =>
+            rm(directory, { recursive: true, force: true }, done)
         );
 
         let empty_dir: string;
 
-        before('create empty tree', callback =>
+        // create empty tree
+        before((t, callback) =>
             mkdtemp(path_join(tmpdir(), 'nodejs-utils-test_'), (err, dir) => {
                     if (err) return callback(err);
                     empty_dir = dir;
@@ -169,25 +175,26 @@ describe('utils::helpers', () => {
             )
         );
 
-        after('delete empty tree', callback =>
-            rmdir(empty_dir, callback)
+        // delete empty tree
+        after((__t, done) =>
+            rm(empty_dir, { recursive: true, force: true }, done)
         );
 
         describe('trivialWalk', () => {
             it('should work on empty tree', () => {
                 const res = trivialWalk(empty_dir);
-                expect(res).to.be.an.instanceOf(Array);
-                expect(res).to.be.empty || (() => undefined)();
+                assert.deepStrictEqual(res instanceof Array, true);
+                assert.deepStrictEqual(res.length, 0);
             });
 
             it('should work 3 levels deep', () =>
-                expect(trivialWalk(directory)).to.have.members(
+                assert.deepStrictEqual(trivialWalk(directory),
                     tree.map((dir_file: string[]) => path_join(...dir_file))
                 )
             );
 
             it('should filter 3 levels deep', () =>
-                expect(trivialWalk(directory, ['node_modules'])).to.have.members(
+                assert.deepStrictEqual(trivialWalk(directory, ['node_modules']),
                     tree.map((dir_file: string[]) => path_join(...dir_file))
                 )
             )
@@ -196,18 +203,20 @@ describe('utils::helpers', () => {
         describe('populateModelRoutes', () => {
             it('should work on empty tree', () => {
                 const res = populateModelRoutes(empty_dir);
-                expect(res).to.be.an.instanceOf(Object);
-                expect(res).to.be.empty || (() => undefined)();
+                assert.deepStrictEqual(res instanceof Object, true);
+                assert.deepStrictEqual(res.size, 0);
             });
 
             it('should work 3 levels deep', () => {
-                const res = populateModelRoutes(directory);
-                expect(res).to.be.an.instanceOf(Object);
+                const res: Map<string, any> = populateModelRoutes(directory);
+                assert.deepStrictEqual(res instanceof Object, true);
                 const keys = [
                     'jarring', 'car', 'can', 'raw', basename(directory)
                 ];
-                expect(res).to.have.all.keys(keys);
-                keys.map(key => expect(res[key]).to.have.any.keys(['models', 'admin', 'routes']));
+                assert.deepStrictEqual(res.keys(), keys);
+                ['models', 'admin', 'routes'].forEach(key => {
+                    assert.deepStrictEqual(res.has(key), true, `${key} not found in ${res}`);
+                });
             })
         });
     });
@@ -216,7 +225,7 @@ describe('utils::helpers', () => {
         it('works with basic object', () => {
             const json = { 'mises': 'was', 'was': 'right' };
             const text = 'Mises ${mises} ${was}';
-            expect(format(text, json)).to.be.eql('Mises was right');
+            assert.deepStrictEqual(format(text, json), 'Mises was right');
         });
     });
 });

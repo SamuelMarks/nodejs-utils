@@ -1,2 +1,3 @@
 import { IDependencies } from '../interfaces.d';
-export declare const dependencies_input: IDependencies[];
+declare const dependencies_input: IDependencies[];
+export { dependencies_input };

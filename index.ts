@@ -1,15 +1,13 @@
-import * as fs from 'fs';
-import { readdirSync, statSync } from 'fs';
-import { basename, dirname, join, normalize, resolve, sep } from 'path';
+import { readdirSync, statSync } from 'node:fs';
+import { basename, dirname, join, normalize, resolve, sep } from 'node:path';
 
 import * as URI from 'uri-js';
 import { Response } from 'supertest';
 
+import * as restify from "restify";
 import {
     IDependencies,
     IErrorResponse,
-    ImkdirpCb,
-    ImkdirpOpts,
     IModelRoute,
     IncomingMessageError,
     TCallback
@@ -82,7 +80,7 @@ export const populateModelRoutes =
 
 export const objListToObj = (objList: Array<{}>): {} => {
     /* Takes an objList without null/undefined */
-    const obj: {[key: string]: any} = {};
+    const obj: { [key: string]: any } = {};
     objList.forEach(o => ((key: string) => obj[key] = obj[key] != null ?
         // @ts-ignore
         trivial_merge(obj[key], o[key]) : o[key])(Object.keys(o) as string[] | any));
@@ -90,7 +88,7 @@ export const objListToObj = (objList: Array<{}>): {} => {
 };
 
 export const groupBy = (array: Array<any>, f: Function): typeof array => {
-    const groups = {};
+    const groups: { [key: string]: typeof array } = {};
     array.forEach(o => {
         const group = JSON.stringify(f(o));
         // @ts-ignore
@@ -105,7 +103,7 @@ export const getUTCDate = (now = new Date()): Date =>
         now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
 
 
-export const sanitiseSchema = (schema: {}, omit: Array<string>): {} =>
+export const sanitiseSchema = (schema: { [key: string]: Array<any> }, omit: Array<string>): {} =>
     objListToObj(Object.keys(schema).map(k => (
         { [k]: k === 'required' ? schema[k].filter(x => omit.indexOf(x) === -1) : schema[k] }
     )));
@@ -122,7 +120,7 @@ export const uri_to_config = (uri: string): IConnectionConfig => {
     const comps: URI.URIComponents = URI.parse(uri);
     if (comps == null) throw TypeError('Unable to parse URI');
     const user_pass = comps.userinfo && comps.userinfo.split(':') || [];
-    const user_obj: {user?: string, password?: string} = {};
+    const user_obj: { user?: string, password?: string } = {};
 
     if (user_pass.length === 2) {
         user_obj.user = user_pass[0];
@@ -137,33 +135,40 @@ export const uri_to_config = (uri: string): IConnectionConfig => {
     }, user_obj);
 };
 
-export const raise = (throwable: Error | any) => { throw throwable };
+export const raise = (throwable: Error | any) => {
+    throw throwable
+};
 
-export const getError = (err: IncomingMessageError | Error): IncomingMessageError | Error => {
-    if (err as any === false) {
+export const getError = (err: null | IncomingMessageError | Error | {
+    jse_shortmsg: string,
+    text: string,
+    message: string
+}): IncomingMessageError | Error => {
+    if (err as any === false || err == null) {
         // @ts-ignore
         return null;
     }
-    if (typeof err['jse_shortmsg'] !== 'undefined') {
+    if (err!.hasOwnProperty("jse_shortmsg")) {
         const e: IncomingMessageError = err as IncomingMessageError;
         return e != null && e.body && e.body.error_message ? JSON.parse(e.body.error_message) : e;
     }
-    if (err != null && typeof err['text'] !== 'undefined')
-        err.message += ' | ' + err['text'];
-    return err;
+    if (err!.hasOwnProperty("text"))
+        err.message += ' | ' + (err as { text: string }).text;
+
+    return err as IncomingMessageError | Error;
 };
 
 export const superEndCb = (callback: TCallback<Error | IncomingMessageError, Response>) =>
     (e: IncomingMessageError | Error, r?: Response) => callback(supertestGetError(e, r), r);
 
 export const supertestGetError = (e: IncomingMessageError | Error, r?: Response): IncomingMessageError | Error =>
-    getError(r != null && r.hasOwnProperty('error') && r.error != null  ? (r as {error: typeof e}).error : e);
+    getError(r != null && r.hasOwnProperty('error') && r.error != null ? (r as { error: typeof e }).error : e);
 
 export const debugCb = (name: string, callback: TCallback<any, any>) => /* tslint:disable:no-console */
     (e: any, r: any) => console.warn(`${name}::e =`, e, `;\n${name}::r =`, r, ';') as any || callback(e, r);
 
-export const uniqIgnoreCb = (callback: TCallback<Error | Chai.AssertionError | {message: string}, any>) =>
-    (err: Chai.AssertionError | Error | {message: string}, res: Response | any) =>
+export const uniqIgnoreCb = (callback: TCallback<Error | { message: string }, any>) =>
+    (err: Error | { message: string }, res: Response | any) =>
         callback(err != null && err.message != null && err.message.indexOf('E_UNIQUE') === -1 ? err : void 0, res);
 
 export function* permute<T>(permutation: T[] | T | any): IterableIterator<T> {
@@ -206,17 +211,17 @@ export const build_dep_graph = (dependencies: IDependencies[]): Map<string, any>
         return true;
     };
 
-    const models2deps = new Map<string, [string, string[]]>();
-    const models_no_deps = new Map<string, string>();
-    const routes = new Set<string>();
-    const all_deps = new Map<string, any>();
-    dependencies.forEach(dep => {
-        const k = Object.keys(dep)[0];
+    const models2deps: Map<string, [string, string[]]> = new Map<string, [string, string[]]>();
+    const models_no_deps: Map<string, string> = new Map<string, string>();
+    const routes: Set<string> = new Set<string>();
+    const all_deps: Map<string, any> = new Map<string, any>();
+    dependencies.forEach((dep: IDependencies) => {
+        const k: string = Object.keys(dep)[0];
         all_deps.set(k, dep[k]);
-        const d = dirname(k);
-        const b = basename(k, '.js');
+        const d: string = dirname(k);
+        const b: string = basename(k, '.js');
         if (['model', 'models'].indexOf(b) > -1) {
-            const deps = dep[k]._dependencies || dep[k]['dependencies'];
+            const deps = dep[k]._dependencies || (dep[k] as { dependencies?: string[] })['dependencies'];
             if (deps == null) models_no_deps.set(d, k);
             else models2deps.set(d, [k, deps]);
         } else if (['admin', 'route', 'routes'].indexOf(b) > -1)
@@ -253,24 +258,24 @@ export const get_models_routes = (models_routes: Map<string, any>): IModelRoute 
     Array.from(groupByMap<string>(models_routes, k => k[0].slice(0, k[0].indexOf('/')))).reduce(
         (a: {}, b) => Object.assign(a, {
             [b[0]]: b[1].map(
-                fname_prog => ({ [basename(fname_prog[0], '.js')]: fname_prog[1] })
-            ).reduce((prev, curr) => Object.assign(prev, curr), {})
+                (fname_prog: string[]) => ({ [basename(fname_prog[0], '.js')]: fname_prog[1] })
+            ).reduce((prev: {}, curr: {}) => Object.assign(prev, curr), {})
         }), {}
     );
 
 export const model_route_to_map = (model_route: IModelRoute): Map<string, any> => new Map(
-    Object.entries(Object.keys(model_route).map(entity => Object.keys(model_route[entity]).map(
-        m_or_r => ({ [join(entity, `${m_or_r}.js`)]: model_route[entity][m_or_r] }))
+    Object.entries(Object.keys(model_route).map((entity: string) => Object.keys(model_route[entity]).map(
+        (m_or_r: string) => ({ [join(entity, `${m_or_r}.js`)]: (model_route[entity] as {[key: string]: restify.RequestHandler})[m_or_r] }))
     ).reduce((a, b) => a.concat(b), []).reduce((a, b) => Object.assign(a, b), {})));
 
 export const toSentenceCase = (s: string): string => `${s[0].toLocaleUpperCase()}${s.slice(1)}`;
 
-export const resolveIntFromObject = (obj: {}): typeof obj =>
+export const resolveIntFromObject = (obj: { [key: string]: any }): typeof obj =>
     Object.keys(obj)
         .map(k => ({ [k]: isNaN(obj[k]) ? obj[k] : parseInt(obj[k]) }))
         .reduce((a, b) => Object.assign(a, b), {});
 
-export const format = (s: string, args): string => {
+export const format = (s: string, args: { mises: string; was: string, [key: string]: string }): string => {
     for (let attr in args) if (args.hasOwnProperty(attr)) s = s.split('${' + attr + '}').join(args[attr]);
     return s || '';
 };
@@ -280,7 +285,7 @@ export const removeNulls = (a: any[]): typeof a => a.filter(e => e != null);
 export const unwrapIfOneElement = (a: any[]): typeof a | typeof a[0] => a.length === 1 ? a[0] : a;
 
 export const exceptionToErrorResponse = (error: any): IErrorResponse => {
-    const hasJseInfo = (e: {jse_info: IErrorResponse}) => ({
+    const hasJseInfo = (e: { jse_info: IErrorResponse }) => ({
         code: e.jse_info.code,
         error: e.jse_info.error,
         error_message: e.jse_info.error_message

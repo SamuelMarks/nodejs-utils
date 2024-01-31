@@ -1,5 +1,6 @@
+import { Stats } from 'node:fs';
+
 import { Response } from 'supertest';
-import { Stats } from 'fs';
 import * as restify from 'restify';
 
 export interface ImkdirpOpts {
